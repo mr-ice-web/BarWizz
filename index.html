@@ -1,0 +1,2907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bar Wizz - Master the Art of Mixology</title>
+<style>
+/* ============================================
+   CSS RESET & VARIABLES
+   ============================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-dark:#0a0a12;
+  --bg-card:#13131f;
+  --bg-card-hover:#1a1a2e;
+  --bg-surface:#16162a;
+  --gold:#d4a543;
+  --gold-light:#f0d078;
+  --gold-dim:#8a6d2b;
+  --amber:#e8a030;
+  --purple:#6c3fc5;
+  --purple-light:#9b6dff;
+  --purple-dim:#3a1f6e;
+  --teal:#2dd4bf;
+  --teal-dim:#0f766e;
+  --rose:#f43f5e;
+  --rose-dim:#9f1239;
+  --blue:#3b82f6;
+  --green:#22c55e;
+  --green-dim:#15803d;
+  --text:#e8e6f0;
+  --text-dim:#8888a8;
+  --text-muted:#55556a;
+  --border:#2a2a40;
+  --radius:12px;
+  --radius-lg:20px;
+  --radius-sm:8px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg-dark);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+button{cursor:pointer;font-family:inherit;border:none;outline:none;background:none;color:inherit}
+input,select{font-family:inherit;outline:none}
+a{color:inherit;text-decoration:none}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg-dark)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.app{display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{
+  width:260px;
+  background:var(--bg-card);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;
+  z-index:100;
+  transition:transform 0.3s ease;
+}
+.sidebar-header{
+  padding:24px 20px;
+  border-bottom:1px solid var(--border);
+  text-align:center;
+}
+.sidebar-header h1{
+  font-size:1.6rem;
+  font-weight:800;
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:2px;
+}
+.sidebar-header .subtitle{
+  font-size:0.7rem;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  letter-spacing:3px;
+  margin-top:4px;
+}
+
+/* Player Stats in Sidebar */
+.player-stats{
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+}
+.player-level{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:8px;
+}
+.level-badge{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,var(--purple),var(--purple-light));
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:0.85rem;
+  box-shadow:0 0 12px rgba(108,63,197,0.4);
+}
+.player-info .player-name{font-weight:600;font-size:0.9rem}
+.player-info .player-title{font-size:0.7rem;color:var(--text-dim)}
+.xp-bar{
+  background:var(--bg-dark);
+  border-radius:10px;height:8px;
+  overflow:hidden;margin-top:6px;
+}
+.xp-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--purple),var(--gold));
+  border-radius:10px;
+  transition:width 0.5s ease;
+}
+.xp-text{font-size:0.65rem;color:var(--text-dim);margin-top:3px;text-align:right}
+
+.streak-display{
+  display:flex;align-items:center;gap:6px;
+  margin-top:8px;font-size:0.8rem;
+  color:var(--amber);
+}
+
+/* Nav */
+.nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 20px;
+  font-size:0.85rem;font-weight:500;
+  color:var(--text-dim);
+  transition:var(--transition);
+  border-left:3px solid transparent;
+  cursor:pointer;
+}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.nav-item.active{
+  color:var(--gold);
+  background:rgba(212,165,67,0.06);
+  border-left-color:var(--gold);
+}
+.nav-item .nav-icon{font-size:1.1rem;width:24px;text-align:center}
+.nav-item .nav-badge{
+  margin-left:auto;
+  background:var(--purple);
+  color:#fff;
+  font-size:0.65rem;font-weight:700;
+  padding:2px 7px;border-radius:10px;
+}
+
+/* Main Content */
+.main{
+  flex:1;
+  margin-left:260px;
+  min-height:100vh;
+}
+.page{display:none;padding:32px;max-width:1200px;margin:0 auto;animation:fadeIn 0.3s ease}
+.page.active{display:block}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Mobile Nav Toggle */
+.mobile-toggle{
+  display:none;
+  position:fixed;top:16px;left:16px;z-index:200;
+  width:44px;height:44px;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  align-items:center;justify-content:center;
+  font-size:1.2rem;
+}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .mobile-toggle{display:flex}
+  .page{padding:20px;padding-top:70px}
+}
+
+/* ============================================
+   COMMON COMPONENTS
+   ============================================ */
+.section-title{
+  font-size:1.5rem;font-weight:700;
+  margin-bottom:8px;
+}
+.section-subtitle{
+  color:var(--text-dim);font-size:0.9rem;
+  margin-bottom:24px;
+}
+
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  transition:var(--transition);
+}
+.card:hover{border-color:rgba(212,165,67,0.2)}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 24px;
+  border-radius:var(--radius-sm);
+  font-weight:600;font-size:0.85rem;
+  transition:var(--transition);
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  color:#0a0a12;
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(212,165,67,0.3)}
+.btn-secondary{
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  color:var(--text);
+}
+.btn-secondary:hover{border-color:var(--gold-dim)}
+.btn-ghost{color:var(--text-dim);padding:8px 16px}
+.btn-ghost:hover{color:var(--text)}
+.btn-danger{background:var(--rose-dim);color:#fff}
+.btn-danger:hover{background:var(--rose)}
+.btn-success{background:var(--green-dim);color:#fff}
+.btn-success:hover{background:var(--green)}
+.btn-sm{padding:6px 14px;font-size:0.78rem}
+.btn-lg{padding:14px 36px;font-size:1rem}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important}
+
+.tag{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:20px;
+  font-size:0.7rem;font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+.tag-shake{background:rgba(244,63,94,0.15);color:var(--rose)}
+.tag-build{background:rgba(45,212,191,0.15);color:var(--teal)}
+.tag-stir{background:rgba(59,130,246,0.15);color:var(--blue)}
+.tag-muddle{background:rgba(212,165,67,0.15);color:var(--gold)}
+.tag-layer{background:rgba(155,109,255,0.15);color:var(--purple-light)}
+
+.glass-icon{font-size:1.4rem}
+
+/* Toast */
+.toast-container{
+  position:fixed;top:20px;right:20px;z-index:9999;
+  display:flex;flex-direction:column;gap:8px;
+}
+.toast{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:12px 20px;
+  display:flex;align-items:center;gap:10px;
+  font-size:0.85rem;
+  animation:slideInRight 0.3s ease;
+  box-shadow:var(--shadow);
+  min-width:250px;
+}
+.toast.xp{border-left:3px solid var(--gold)}
+.toast.achievement{border-left:3px solid var(--purple)}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--rose)}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;
+  z-index:500;
+  animation:fadeIn 0.2s ease;
+}
+.modal-overlay.active{display:flex}
+.modal{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:32px;
+  max-width:500px;width:90%;
+  max-height:85vh;overflow-y:auto;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.modal h2{font-size:1.3rem;margin-bottom:16px}
+
+/* ============================================
+   DASHBOARD
+   ============================================ */
+.dashboard-hero{
+  background:linear-gradient(135deg,rgba(108,63,197,0.15),rgba(212,165,67,0.1));
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:40px;
+  margin-bottom:32px;
+  position:relative;overflow:hidden;
+}
+.dashboard-hero::before{
+  content:'';position:absolute;
+  top:-50%;right:-20%;
+  width:400px;height:400px;
+  background:radial-gradient(circle,rgba(212,165,67,0.08),transparent 70%);
+}
+.hero-greeting{font-size:1.8rem;font-weight:700;margin-bottom:4px}
+.hero-subtitle{color:var(--text-dim);margin-bottom:20px}
+.hero-stats{display:flex;gap:24px;flex-wrap:wrap}
+.hero-stat{
+  background:rgba(0,0,0,0.2);
+  border-radius:var(--radius-sm);
+  padding:12px 20px;
+  min-width:120px;
+}
+.hero-stat .stat-value{font-size:1.4rem;font-weight:800;color:var(--gold)}
+.hero-stat .stat-label{font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+  margin-bottom:32px;
+}
+.dash-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  cursor:pointer;
+  transition:var(--transition);
+  position:relative;overflow:hidden;
+}
+.dash-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(212,165,67,0.3);
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+.dash-card .card-icon{
+  font-size:2rem;margin-bottom:12px;
+  display:block;
+}
+.dash-card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.dash-card p{font-size:0.8rem;color:var(--text-dim);line-height:1.5}
+.dash-card .card-arrow{
+  position:absolute;top:24px;right:24px;
+  color:var(--text-muted);font-size:1.2rem;
+  transition:var(--transition);
+}
+.dash-card:hover .card-arrow{color:var(--gold);transform:translateX(4px)}
+
+/* Quick Actions */
+.quick-actions{
+  display:flex;gap:12px;flex-wrap:wrap;
+  margin-bottom:32px;
+}
+.quick-action{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px 24px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;
+  transition:var(--transition);
+  font-size:0.85rem;font-weight:500;
+}
+.quick-action:hover{border-color:var(--gold-dim);background:var(--bg-card-hover)}
+
+/* Recent Activity */
+.activity-list{display:flex;flex-direction:column;gap:8px}
+.activity-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 16px;
+  background:var(--bg-surface);
+  border-radius:var(--radius-sm);
+  font-size:0.82rem;
+}
+.activity-item .activity-icon{font-size:1rem}
+.activity-item .activity-time{margin-left:auto;color:var(--text-muted);font-size:0.72rem}
+
+/* ============================================
+   RECIPE BOOK
+   ============================================ */
+.recipe-controls{
+  display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;
+  align-items:center;
+}
+.search-box{
+  flex:1;min-width:200px;
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:10px 16px;
+  color:var(--text);font-size:0.85rem;
+}
+.search-box:focus{border-color:var(--gold-dim)}
+.filter-btn{
+  padding:8px 16px;
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-size:0.78rem;font-weight:600;
+  color:var(--text-dim);
+  transition:var(--transition);
+}
+.filter-btn.active{
+  background:rgba(212,165,67,0.1);
+  border-color:var(--gold-dim);
+  color:var(--gold);
+}
+
+.recipe-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:16px;
+}
+.recipe-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  cursor:pointer;
+  transition:var(--transition);
+}
+.recipe-card:hover{
+  border-color:rgba(212,165,67,0.3);
+  transform:translateY(-2px);
+}
+.recipe-card-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:12px;
+}
+.recipe-card-header h3{font-size:1rem;font-weight:700}
+.recipe-card-header .recipe-glass{font-size:0.7rem;color:var(--text-dim)}
+.recipe-card .recipe-tags{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.recipe-card .ingredients-preview{
+  font-size:0.78rem;color:var(--text-dim);
+  line-height:1.6;
+}
+.recipe-card .ingredients-preview span{
+  display:inline-block;
+  background:var(--bg-surface);
+  padding:2px 8px;
+  border-radius:4px;
+  margin:2px 2px;
+  font-size:0.72rem;
+}
+
+/* Recipe Detail Modal */
+.recipe-detail{max-width:600px}
+.recipe-detail-header{
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:20px;
+}
+.recipe-detail-glass{
+  width:64px;height:64px;
+  background:linear-gradient(135deg,var(--purple-dim),var(--bg-surface));
+  border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;
+}
+.recipe-detail h2{font-size:1.4rem;margin-bottom:2px}
+.recipe-detail .recipe-meta{font-size:0.78rem;color:var(--text-dim)}
+.recipe-detail .recipe-fun-fact{
+  background:rgba(212,165,67,0.08);
+  border-left:3px solid var(--gold);
+  padding:12px 16px;
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:0.82rem;
+  color:var(--gold-light);
+  margin-bottom:20px;
+  font-style:italic;
+}
+.ingredient-table{width:100%;margin-bottom:20px}
+.ingredient-table th{
+  text-align:left;
+  font-size:0.7rem;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--text-muted);
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+}
+.ingredient-table td{
+  padding:8px 0;
+  font-size:0.85rem;
+  border-bottom:1px solid rgba(42,42,64,0.5);
+}
+.ingredient-table .qty{color:var(--gold);font-weight:600;width:70px}
+.method-steps{margin-bottom:20px}
+.method-steps h4{font-size:0.85rem;margin-bottom:10px;color:var(--gold)}
+.method-steps ol{padding-left:20px}
+.method-steps li{font-size:0.82rem;margin-bottom:6px;color:var(--text-dim)}
+
+/* ============================================
+   FLASHCARDS
+   ============================================ */
+.flashcard-container{
+  display:flex;flex-direction:column;align-items:center;
+  min-height:60vh;
+}
+.flashcard-progress{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:24px;
+  font-size:0.85rem;color:var(--text-dim);
+}
+.flashcard-progress .progress-bar{
+  width:200px;height:6px;
+  background:var(--bg-surface);
+  border-radius:3px;overflow:hidden;
+}
+.flashcard-progress .progress-fill{
+  height:100%;background:var(--gold);
+  border-radius:3px;transition:width 0.3s ease;
+}
+.flashcard-deck{
+  position:relative;
+  width:100%;max-width:500px;
+  height:380px;
+  perspective:1000px;
+  margin-bottom:32px;
+}
+.flashcard{
+  position:absolute;inset:0;
+  border-radius:var(--radius-lg);
+  cursor:pointer;
+  transition:transform 0.6s ease;
+  transform-style:preserve-3d;
+}
+.flashcard.flipped{transform:rotateY(180deg)}
+.flashcard-face{
+  position:absolute;inset:0;
+  backface-visibility:hidden;
+  border-radius:var(--radius-lg);
+  padding:32px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+}
+.flashcard-front{
+  background:linear-gradient(135deg,#1a1a3e,#13132a);
+  border:2px solid var(--border);
+}
+.flashcard-front .fc-cocktail-name{
+  font-size:1.8rem;font-weight:800;
+  margin-bottom:8px;
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.flashcard-front .fc-hint{color:var(--text-dim);font-size:0.85rem;margin-bottom:20px}
+.flashcard-front .fc-prompt{
+  color:var(--text-muted);font-size:0.75rem;
+  position:absolute;bottom:24px;
+}
+.flashcard-back{
+  background:linear-gradient(135deg,#1e1a30,#15132a);
+  border:2px solid var(--gold-dim);
+  transform:rotateY(180deg);
+  align-items:flex-start;
+  justify-content:flex-start;
+  text-align:left;
+  overflow-y:auto;
+}
+.flashcard-back h3{
+  font-size:1.1rem;color:var(--gold);
+  margin-bottom:16px;
+  align-self:center;
+}
+.fc-ingredient-list{width:100%;margin-bottom:16px}
+.fc-ingredient{
+  display:flex;justify-content:space-between;
+  padding:6px 0;
+  border-bottom:1px solid rgba(42,42,64,0.5);
+  font-size:0.85rem;
+}
+.fc-ingredient .fc-qty{color:var(--gold);font-weight:600}
+.fc-detail-row{
+  display:flex;gap:16px;
+  margin-top:8px;
+  font-size:0.78rem;
+}
+.fc-detail-item{
+  background:var(--bg-surface);
+  padding:6px 12px;
+  border-radius:var(--radius-sm);
+}
+.fc-detail-label{color:var(--text-muted);font-size:0.65rem;text-transform:uppercase}
+
+.flashcard-controls{
+  display:flex;gap:16px;align-items:center;
+}
+.fc-btn{
+  width:56px;height:56px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;
+  transition:var(--transition);
+}
+.fc-btn-fail{
+  background:rgba(244,63,94,0.15);
+  border:2px solid var(--rose-dim);
+  color:var(--rose);
+}
+.fc-btn-fail:hover{background:rgba(244,63,94,0.25);transform:scale(1.1)}
+.fc-btn-ok{
+  background:rgba(59,130,246,0.15);
+  border:2px solid rgba(59,130,246,0.3);
+  color:var(--blue);
+}
+.fc-btn-ok:hover{background:rgba(59,130,246,0.25);transform:scale(1.1)}
+.fc-btn-good{
+  background:rgba(34,197,94,0.15);
+  border:2px solid var(--green-dim);
+  color:var(--green);
+}
+.fc-btn-good:hover{background:rgba(34,197,94,0.25);transform:scale(1.1)}
+
+.fc-settings{
+  margin-top:24px;
+  display:flex;gap:8px;flex-wrap:wrap;
+  justify-content:center;
+}
+
+/* ============================================
+   FORMULA LAB
+   ============================================ */
+.formula-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:20px;
+}
+.formula-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  transition:var(--transition);
+}
+.formula-card:hover{border-color:rgba(212,165,67,0.2)}
+.formula-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:16px;
+}
+.formula-icon{
+  width:48px;height:48px;
+  border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;
+}
+.formula-name{font-size:1.1rem;font-weight:700}
+.formula-desc{font-size:0.78rem;color:var(--text-dim)}
+.formula-equation{
+  background:var(--bg-dark);
+  border-radius:var(--radius-sm);
+  padding:16px;
+  text-align:center;
+  margin-bottom:16px;
+  font-size:1.1rem;
+  font-weight:600;
+  letter-spacing:1px;
+}
+.formula-equation .f-plus{color:var(--text-muted);margin:0 6px}
+.formula-equation .f-spirit{color:var(--rose)}
+.formula-equation .f-citrus{color:var(--teal)}
+.formula-equation .f-sweet{color:var(--gold)}
+.formula-equation .f-mod{color:var(--purple-light)}
+.formula-equation .f-top{color:var(--blue)}
+.formula-cocktails{
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.formula-cocktail-tag{
+  background:var(--bg-surface);
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:0.72rem;
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:var(--transition);
+}
+.formula-cocktail-tag:hover{color:var(--gold);background:rgba(212,165,67,0.1)}
+
+/* Ratio Visual */
+.ratio-bar{
+  display:flex;height:24px;border-radius:12px;overflow:hidden;
+  margin-bottom:12px;
+}
+.ratio-segment{
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.6rem;font-weight:700;
+  color:rgba(0,0,0,0.7);
+  transition:var(--transition);
+}
+.ratio-segment:hover{filter:brightness(1.2)}
+
+/* ============================================
+   MIXOLOGY ACADEMY
+   ============================================ */
+.academy-tabs{
+  display:flex;gap:8px;margin-bottom:24px;
+  flex-wrap:wrap;
+}
+.academy-tab{
+  padding:10px 20px;
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-size:0.82rem;font-weight:600;
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:var(--transition);
+}
+.academy-tab.active{
+  background:rgba(212,165,67,0.1);
+  border-color:var(--gold-dim);
+  color:var(--gold);
+}
+
+.academy-content{animation:fadeIn 0.3s ease}
+
+/* Method Cards */
+.method-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
+}
+.method-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+}
+.method-card h3{font-size:1rem;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.method-card p{font-size:0.82rem;color:var(--text-dim);line-height:1.6;margin-bottom:12px}
+.method-card .method-visual{
+  background:var(--bg-dark);
+  border-radius:var(--radius-sm);
+  padding:16px;
+  text-align:center;
+  margin-bottom:12px;
+  font-size:2rem;
+}
+.method-card .cocktail-examples{
+  display:flex;flex-wrap:wrap;gap:4px;
+}
+.method-card .cocktail-examples span{
+  background:var(--bg-surface);
+  padding:2px 8px;border-radius:4px;
+  font-size:0.7rem;color:var(--text-dim);
+}
+
+/* Glass Guide */
+.glass-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;
+}
+.glass-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;text-align:center;
+}
+.glass-card .glass-visual{font-size:3rem;margin-bottom:8px}
+.glass-card h4{font-size:0.9rem;margin-bottom:6px}
+.glass-card p{font-size:0.75rem;color:var(--text-dim)}
+
+/* Infographics */
+.infographic-section{margin-bottom:32px}
+.infographic-title{font-size:1.1rem;font-weight:700;margin-bottom:16px}
+.spirit-family-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:16px;
+}
+.spirit-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+}
+.spirit-card h4{
+  font-size:0.95rem;margin-bottom:4px;
+  display:flex;align-items:center;gap:8px;
+}
+.spirit-card .spirit-base{font-size:0.75rem;color:var(--text-dim);margin-bottom:10px}
+.spirit-card .spirit-cocktails{font-size:0.78rem;color:var(--text-dim);line-height:1.6}
+
+/* ============================================
+   QUIZ ARENA
+   ============================================ */
+.quiz-modes{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:16px;
+  margin-bottom:32px;
+}
+.quiz-mode-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  cursor:pointer;
+  transition:var(--transition);
+  position:relative;overflow:hidden;
+}
+.quiz-mode-card:hover{
+  border-color:rgba(212,165,67,0.3);
+  transform:translateY(-2px);
+}
+.quiz-mode-card .mode-icon{font-size:2rem;margin-bottom:10px}
+.quiz-mode-card h3{font-size:1rem;margin-bottom:6px}
+.quiz-mode-card p{font-size:0.78rem;color:var(--text-dim)}
+.quiz-mode-card .mode-difficulty{
+  position:absolute;top:16px;right:16px;
+  font-size:0.65rem;font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+/* Quiz In Progress */
+.quiz-container{max-width:700px;margin:0 auto}
+.quiz-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;
+}
+.quiz-timer{
+  font-size:1.2rem;font-weight:700;
+  color:var(--gold);
+  font-variant-numeric:tabular-nums;
+}
+.quiz-score{font-size:0.85rem;color:var(--text-dim)}
+.quiz-progress-bar{
+  width:100%;height:6px;
+  background:var(--bg-surface);
+  border-radius:3px;
+  margin-bottom:32px;overflow:hidden;
+}
+.quiz-progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--purple),var(--gold));
+  border-radius:3px;transition:width 0.3s ease;
+}
+.quiz-question{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:32px;
+  margin-bottom:20px;
+  text-align:center;
+}
+.quiz-question .q-number{
+  font-size:0.7rem;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:2px;
+  margin-bottom:12px;
+}
+.quiz-question .q-text{
+  font-size:1.2rem;font-weight:600;
+  line-height:1.5;
+}
+.quiz-question .q-context{
+  font-size:0.82rem;color:var(--text-dim);
+  margin-top:8px;
+}
+.quiz-options{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+@media(max-width:600px){.quiz-options{grid-template-columns:1fr}}
+.quiz-option{
+  background:var(--bg-card);
+  border:2px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px 20px;
+  text-align:left;
+  font-size:0.9rem;
+  cursor:pointer;
+  transition:var(--transition);
+  display:flex;align-items:center;gap:12px;
+}
+.quiz-option:hover:not(.disabled){
+  border-color:var(--gold-dim);
+  background:var(--bg-card-hover);
+}
+.quiz-option .option-letter{
+  width:28px;height:28px;
+  border-radius:50%;
+  background:var(--bg-surface);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:0.8rem;
+  flex-shrink:0;
+}
+.quiz-option.correct{
+  border-color:var(--green)!important;
+  background:rgba(34,197,94,0.1)!important;
+}
+.quiz-option.correct .option-letter{background:var(--green);color:#000}
+.quiz-option.wrong{
+  border-color:var(--rose)!important;
+  background:rgba(244,63,94,0.08)!important;
+}
+.quiz-option.wrong .option-letter{background:var(--rose);color:#fff}
+.quiz-option.disabled{cursor:default;opacity:0.6}
+
+/* Quiz Results */
+.quiz-results{text-align:center;padding:40px 20px}
+.results-score{
+  font-size:4rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:8px;
+}
+.results-label{font-size:1.1rem;color:var(--text-dim);margin-bottom:24px}
+.results-stats{
+  display:flex;gap:24px;justify-content:center;
+  margin-bottom:32px;flex-wrap:wrap;
+}
+.results-stat{text-align:center}
+.results-stat .rs-value{font-size:1.5rem;font-weight:700}
+.results-stat .rs-label{font-size:0.72rem;color:var(--text-dim)}
+.results-breakdown{
+  text-align:left;
+  max-width:500px;margin:0 auto 24px;
+}
+.results-breakdown h4{font-size:0.85rem;margin-bottom:12px;color:var(--text-dim)}
+.rb-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;
+  border-radius:var(--radius-sm);
+  margin-bottom:4px;
+  font-size:0.82rem;
+}
+.rb-item.rb-correct{background:rgba(34,197,94,0.08)}
+.rb-item.rb-wrong{background:rgba(244,63,94,0.08)}
+.rb-item .rb-icon{font-size:0.9rem}
+
+/* ============================================
+   SIMULATION MODE
+   ============================================ */
+.sim-intro{
+  text-align:center;
+  max-width:600px;margin:0 auto 32px;
+}
+.sim-scenarios{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:16px;
+}
+.sim-scenario-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  cursor:pointer;
+  transition:var(--transition);
+}
+.sim-scenario-card:hover{
+  border-color:rgba(212,165,67,0.3);
+  transform:translateY(-2px);
+}
+.sim-scenario-card .sim-icon{font-size:2rem;margin-bottom:10px}
+.sim-scenario-card h3{font-size:1rem;margin-bottom:6px}
+.sim-scenario-card p{font-size:0.78rem;color:var(--text-dim)}
+.sim-scenario-card .sim-difficulty{
+  margin-top:12px;
+  display:flex;gap:4px;
+}
+.sim-scenario-card .sim-star{color:var(--gold);font-size:0.85rem}
+.sim-scenario-card .sim-star.empty{color:var(--text-muted)}
+
+/* Simulation Active */
+.sim-active{max-width:750px;margin:0 auto}
+.sim-scene{
+  background:linear-gradient(135deg,rgba(108,63,197,0.1),rgba(212,165,67,0.05));
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:32px;
+  margin-bottom:24px;
+  position:relative;
+}
+.sim-scene .scene-label{
+  font-size:0.7rem;color:var(--gold);
+  text-transform:uppercase;letter-spacing:2px;
+  margin-bottom:8px;
+}
+.sim-scene .scene-text{
+  font-size:1.05rem;line-height:1.7;
+  margin-bottom:16px;
+}
+.sim-scene .scene-constraint{
+  background:rgba(244,63,94,0.1);
+  border-left:3px solid var(--rose);
+  padding:10px 16px;
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:0.82rem;
+  color:var(--rose);
+}
+
+.sim-workspace{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-bottom:20px;
+}
+.sim-workspace h4{font-size:0.9rem;margin-bottom:16px;color:var(--gold)}
+
+.sim-ingredient-shelf{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-bottom:20px;
+  padding:16px;
+  background:var(--bg-dark);
+  border-radius:var(--radius-sm);
+  min-height:60px;
+}
+.sim-ingredient{
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:6px 12px;
+  font-size:0.78rem;
+  cursor:pointer;
+  transition:var(--transition);
+  user-select:none;
+}
+.sim-ingredient:hover{border-color:var(--gold-dim);color:var(--gold)}
+.sim-ingredient.selected{
+  background:rgba(212,165,67,0.15);
+  border-color:var(--gold);
+  color:var(--gold);
+}
+.sim-ingredient.unavailable{
+  opacity:0.3;
+  text-decoration:line-through;
+  cursor:not-allowed;
+}
+
+.sim-glass{
+  background:var(--bg-dark);
+  border:2px dashed var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  min-height:120px;
+  display:flex;flex-wrap:wrap;gap:8px;
+  align-content:flex-start;
+  margin-bottom:16px;
+  position:relative;
+}
+.sim-glass::before{
+  content:'Drop ingredients here';
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  color:var(--text-muted);
+  font-size:0.8rem;
+  pointer-events:none;
+}
+.sim-glass:not(:empty)::before{display:none}
+.sim-glass .sim-added{
+  background:rgba(212,165,67,0.1);
+  border:1px solid var(--gold-dim);
+  border-radius:var(--radius-sm);
+  padding:6px 12px;
+  font-size:0.78rem;
+  color:var(--gold);
+  display:flex;align-items:center;gap:6px;
+}
+.sim-added .remove-ing{
+  cursor:pointer;opacity:0.6;
+  transition:var(--transition);
+}
+.sim-added .remove-ing:hover{opacity:1;color:var(--rose)}
+
+.sim-controls{
+  display:flex;gap:12px;flex-wrap:wrap;
+}
+
+.sim-feedback{
+  margin-top:20px;
+  padding:20px;
+  border-radius:var(--radius);
+  animation:fadeIn 0.3s ease;
+}
+.sim-feedback.success{
+  background:rgba(34,197,94,0.1);
+  border:1px solid var(--green-dim);
+}
+.sim-feedback.partial{
+  background:rgba(212,165,67,0.1);
+  border:1px solid var(--gold-dim);
+}
+.sim-feedback.fail{
+  background:rgba(244,63,94,0.08);
+  border:1px solid var(--rose-dim);
+}
+.sim-feedback h4{margin-bottom:8px;font-size:1rem}
+.sim-feedback p{font-size:0.85rem;color:var(--text-dim);line-height:1.6}
+
+/* ============================================
+   ACHIEVEMENTS
+   ============================================ */
+.achievements-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:16px;
+}
+.achievement-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  text-align:center;
+  transition:var(--transition);
+}
+.achievement-card.unlocked{
+  border-color:rgba(212,165,67,0.3);
+}
+.achievement-card.locked{opacity:0.4}
+.achievement-icon{font-size:2.5rem;margin-bottom:8px}
+.achievement-card h4{font-size:0.9rem;margin-bottom:4px}
+.achievement-card p{font-size:0.72rem;color:var(--text-dim)}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+}
+@keyframes shimmer{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+.shimmer{
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);
+  background-size:200% 100%;
+  animation:shimmer 2s infinite;
+}
+
+/* Confetti */
+.confetti-container{
+  position:fixed;inset:0;pointer-events:none;z-index:9998;
+}
+.confetti-piece{
+  position:absolute;
+  width:8px;height:8px;
+  animation:confettiFall 3s ease-in forwards;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+.app-footer{
+  margin-top:16px;
+  padding:18px 32px;
+  text-align:center;
+  background:rgba(255,255,255,0.03);
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  color:var(--text-dim);
+  font-size:0.9rem;
+}
+.app-footer p{margin:0;color:var(--text);}
+.github-link{
+  display:inline-flex;
+  width:32px;
+  height:32px;
+  align-items:center;
+  justify-content:center;
+  color:var(--text);
+  background:rgba(255,255,255,0.05);
+  border-radius:50%;
+  transition:var(--transition);
+}
+.github-link:hover{background:rgba(212,165,67,0.14);color:var(--gold);}
+.github-link svg{width:18px;height:18px;fill:currentColor;}
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+<div class="confetti-container" id="confettiContainer"></div>
+
+<button class="mobile-toggle" onclick="toggleSidebar()">&#9776;</button>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h1>BAR WIZZ</h1>
+      <div class="subtitle">Master Mixology</div>
+    </div>
+
+    <div class="player-stats">
+      <div class="player-level">
+        <div class="level-badge" id="levelBadge">1</div>
+        <div class="player-info">
+          <div class="player-name" id="playerName">Apprentice</div>
+          <div class="player-title" id="playerTitle">Barback</div>
+        </div>
+      </div>
+      <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      <div class="xp-text" id="xpText">0 / 100 XP</div>
+      <div class="streak-display">
+        <span>&#128293;</span>
+        <span id="streakCount">0</span> day streak
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">&#127968;</span> Dashboard
+      </div>
+      <div class="nav-item" data-page="recipes">
+        <span class="nav-icon">&#128214;</span> Recipe Book
+        <span class="nav-badge" id="recipeCount">0</span>
+      </div>
+      <div class="nav-item" data-page="flashcards">
+        <span class="nav-icon">&#127183;</span> Flashcards
+      </div>
+      <div class="nav-item" data-page="formulas">
+        <span class="nav-icon">&#129514;</span> Formula Lab
+      </div>
+      <div class="nav-item" data-page="academy">
+        <span class="nav-icon">&#127891;</span> Academy
+      </div>
+      <div class="nav-item" data-page="quiz">
+        <span class="nav-icon">&#9889;</span> Quiz Arena
+      </div>
+      <div class="nav-item" data-page="simulation">
+        <span class="nav-icon">&#127860;</span> Simulation
+      </div>
+      <div class="nav-item" data-page="achievements">
+        <span class="nav-icon">&#127942;</span> Achievements
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="dashboard-hero">
+        <div class="hero-greeting" id="heroGreeting">Welcome, Bartender!</div>
+        <div class="hero-subtitle">Ready to sharpen your cocktail knowledge?</div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="stat-value" id="statCocktails">0</div>
+            <div class="stat-label">Cocktails Mastered</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-value" id="statQuizzes">0</div>
+            <div class="stat-label">Quizzes Passed</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-value" id="statAccuracy">0%</div>
+            <div class="stat-label">Accuracy</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-value" id="statXP">0</div>
+            <div class="stat-label">Total XP</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dash-card" onclick="navigateTo('flashcards')">
+          <span class="card-icon">&#127183;</span>
+          <h3>Flashcard Drill</h3>
+          <p>Quick-fire recipe memorization with spaced repetition. Flip, recall, repeat.</p>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+        <div class="dash-card" onclick="navigateTo('quiz')">
+          <span class="card-icon">&#9889;</span>
+          <h3>Quiz Challenge</h3>
+          <p>Test your knowledge across ingredients, methods, glassware, and garnishes.</p>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+        <div class="dash-card" onclick="navigateTo('simulation')">
+          <span class="card-icon">&#127860;</span>
+          <h3>Live Simulation</h3>
+          <p>Handle real bar scenarios. Adapt recipes, deal with substitutions, serve under pressure.</p>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+        <div class="dash-card" onclick="navigateTo('formulas')">
+          <span class="card-icon">&#129514;</span>
+          <h3>Formula Lab</h3>
+          <p>Learn the patterns behind cocktail families. Master the formula, master the menu.</p>
+          <span class="card-arrow">&#8594;</span>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom:16px">Quick Start</h3>
+      <div class="quick-actions">
+        <button class="quick-action" onclick="startRandomQuiz()">&#127922; Random 10 Quiz</button>
+        <button class="quick-action" onclick="startFlashcards('weak')">&#128293; Weak Spots Drill</button>
+        <button class="quick-action" onclick="navigateTo('academy')">&#128218; Study Methods</button>
+        <button class="quick-action" onclick="startSimulation('rush')">&#9200; Rush Hour Sim</button>
+      </div>
+    </div>
+
+    <!-- RECIPE BOOK -->
+    <div class="page" id="page-recipes">
+      <h2 class="section-title">Recipe Book</h2>
+      <p class="section-subtitle">Your complete cocktail reference &mdash; <span id="totalRecipes">0</span> recipes</p>
+
+      <div class="recipe-controls">
+        <input type="text" class="search-box" id="recipeSearch" placeholder="Search cocktails, ingredients, methods..." oninput="filterRecipes()">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn" data-filter="shake" onclick="setFilter(this,'shake')">Shake</button>
+        <button class="filter-btn" data-filter="build" onclick="setFilter(this,'build')">Build</button>
+        <button class="filter-btn" data-filter="stir" onclick="setFilter(this,'stir')">Stir</button>
+        <button class="filter-btn" data-filter="muddle" onclick="setFilter(this,'muddle')">Muddle</button>
+      </div>
+
+      <div class="recipe-grid" id="recipeGrid"></div>
+    </div>
+
+    <!-- FLASHCARDS -->
+    <div class="page" id="page-flashcards">
+      <h2 class="section-title">Flashcard Drill</h2>
+      <p class="section-subtitle">Tap to flip. Rate your recall to optimize learning.</p>
+
+      <div class="flashcard-container">
+        <div class="flashcard-progress">
+          <span id="fcProgress">1 / 10</span>
+          <div class="progress-bar"><div class="progress-fill" id="fcProgressFill" style="width:10%"></div></div>
+          <span id="fcScore">Score: 0</span>
+        </div>
+
+        <div class="flashcard-deck" id="flashcardDeck">
+          <div class="flashcard" id="currentFlashcard" onclick="flipCard()">
+            <div class="flashcard-face flashcard-front">
+              <div class="fc-cocktail-name" id="fcName">Loading...</div>
+              <div class="fc-hint" id="fcHint"></div>
+              <div class="fc-prompt">Tap to reveal recipe</div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <h3 id="fcBackName">-</h3>
+              <div class="fc-ingredient-list" id="fcIngredients"></div>
+              <div class="fc-detail-row" id="fcDetails"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard-controls">
+          <button class="fc-btn fc-btn-fail" onclick="rateFlashcard(1)" title="Didn't know">&#10060;</button>
+          <button class="fc-btn fc-btn-ok" onclick="rateFlashcard(2)" title="Partially knew">&#128566;</button>
+          <button class="fc-btn fc-btn-good" onclick="rateFlashcard(3)" title="Knew it!">&#9989;</button>
+        </div>
+
+        <div class="fc-settings">
+          <button class="filter-btn active" onclick="setFcFilter(this,'all')">All Cocktails</button>
+          <button class="filter-btn" onclick="setFcFilter(this,'weak')">Weak Spots</button>
+          <button class="filter-btn" onclick="setFcFilter(this,'classics')">Classics Only</button>
+          <button class="filter-btn" onclick="setFcFilter(this,'specials')">Bar Specials</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMULA LAB -->
+    <div class="page" id="page-formulas">
+      <h2 class="section-title">Formula Lab</h2>
+      <p class="section-subtitle">Every cocktail follows a pattern. Learn the formula, nail every drink.</p>
+      <div class="formula-grid" id="formulaGrid"></div>
+    </div>
+
+    <!-- ACADEMY -->
+    <div class="page" id="page-academy">
+      <h2 class="section-title">Mixology Academy</h2>
+      <p class="section-subtitle">Master the fundamentals of bartending.</p>
+
+      <div class="academy-tabs">
+        <button class="academy-tab active" onclick="setAcademyTab(this,'methods')">Methods</button>
+        <button class="academy-tab" onclick="setAcademyTab(this,'glassware')">Glassware</button>
+        <button class="academy-tab" onclick="setAcademyTab(this,'spirits')">Spirit Families</button>
+        <button class="academy-tab" onclick="setAcademyTab(this,'balance')">Balance & Flavour</button>
+        <button class="academy-tab" onclick="setAcademyTab(this,'garnish')">Garnishing</button>
+      </div>
+
+      <div id="academyContent"></div>
+    </div>
+
+    <!-- QUIZ ARENA -->
+    <div class="page" id="page-quiz">
+      <div id="quizMenu">
+        <h2 class="section-title">Quiz Arena</h2>
+        <p class="section-subtitle">Choose your challenge and prove your mixology mastery.</p>
+        <div class="quiz-modes" id="quizModes"></div>
+      </div>
+      <div id="quizActive" style="display:none"></div>
+      <div id="quizResults" style="display:none"></div>
+    </div>
+
+    <!-- SIMULATION -->
+    <div class="page" id="page-simulation">
+      <div id="simMenu">
+        <div class="sim-intro">
+          <h2 class="section-title">Live Simulation</h2>
+          <p class="section-subtitle">Real bar scenarios. Think on your feet, adapt recipes, handle pressure.</p>
+        </div>
+        <div class="sim-scenarios" id="simScenarios"></div>
+      </div>
+      <div id="simActive" style="display:none"></div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="page" id="page-achievements">
+      <h2 class="section-title">Achievements</h2>
+      <p class="section-subtitle">Collect badges as you master the art of mixology.</p>
+      <div class="achievements-grid" id="achievementsGrid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- RECIPE DETAIL MODAL -->
+<div class="modal-overlay" id="recipeModal">
+  <div class="modal recipe-detail" id="recipeDetailContent"></div>
+</div>
+
+<script>
+// ============================================
+// COCKTAIL DATA
+// ============================================
+const COCKTAILS = [
+  // CLASSICS
+  {id:"amaretto-sour",name:"Amaretto Sour",category:"classic",ingredients:[{qty:"50 ml",item:"Amaretto"},{qty:"25 ml",item:"Lemon Juice (fresh)"},{qty:"10 ml",item:"Sugar Syrup"},{qty:"few drops",item:"Foamer"}],method:"Wet & dry shake, double strain",glass:"Rocks",garnish:"Lemon Twist",funFact:"A maraschino cherry garnish can also be used, as well as around 5-10ml of cherry liqueur.",tags:["shake"],allergens:["Nuts"]},
+  {id:"alexander",name:"Alexander",category:"classic",ingredients:[{qty:"30 ml",item:"Cognac"},{qty:"30 ml",item:"Crème de Cacao"},{qty:"30 ml",item:"Double Cream"}],method:"Shake & Double Strain",glass:"Martini",garnish:"1x Coffee Bean",funFact:"Appears in James Bond books. Classically, ground nutmeg is used as a garnish.",tags:["shake"],allergens:["Milk"]},
+  {id:"aperol-spritz",name:"Aperol Spritz",category:"classic",ingredients:[{qty:"50 ml",item:"Aperol"},{qty:"splash",item:"Prosecco"},{qty:"top with",item:"Soda Water"}],method:"Build",glass:"Large Wine Glass",garnish:"Orange Slice",funFact:"Italian in origin, an orange twist can also be a garnish.",tags:["build"],allergens:["Sulphites"]},
+  {id:"baby-guinness",name:"Baby Guinness",category:"classic",ingredients:[{qty:"20 ml",item:"Coffee Liqueur"},{qty:"5 ml",item:"Bailey's"}],method:"Layer",glass:"Shot",garnish:"None",funFact:"Resembles a tiny glass of stout.",tags:["layer"],allergens:["Milk"]},
+  {id:"black-russian",name:"Black Russian",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"25 ml",item:"Coffee Liqueur"}],method:"Stir",glass:"Rocks",garnish:"None",funFact:"Created in Brussels in the 1940s.",tags:["stir"],allergens:[]},
+  {id:"bloody-mary",name:"Bloody Mary",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"25 ml",item:"Lemon Juice"},{qty:"3 dash",item:"Worcester Sauce"},{qty:"3 dash",item:"Tabasco"},{qty:"top with",item:"Tomato Juice"},{qty:"pinch",item:"Salt & Pepper"}],method:"Build & Stir",glass:"Highball",garnish:"Lemon slice or celery stick",funFact:"Often called a hangover cure, popularised in Paris by American expats. Sometimes uses celery salt instead of regular salt.",tags:["build"],allergens:[]},
+  {id:"blue-lagoon",name:"Blue Lagoon",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"25 ml",item:"Blue Curaçao"},{qty:"top with",item:"Lemonade"},{qty:"",item:"Crushed Ice"}],method:"Stir",glass:"Highball",garnish:"Lemon Slice",funFact:"The drink's blue colour was new and exciting in the 1970s. Bless their hearts.",tags:["stir"],allergens:[]},
+  {id:"caipirinha",name:"Caipirinha",category:"classic",ingredients:[{qty:"50 ml",item:"Cachaça"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"4x",item:"Lime Wedges"},{qty:"",item:"Crushed Ice"}],method:"Muddle and Stir",glass:"Rocks",garnish:"Lime Wedge",funFact:"Cachaça is a popular Brazilian spirit made from sugarcane.",tags:["muddle"],allergens:[]},
+  {id:"clover-club",name:"Clover Club",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"15 ml",item:"Lemon Juice (fresh)"},{qty:"15 ml",item:"Raspberry Syrup"},{qty:"few drops",item:"Foamer"}],method:"Wet & dry shake, double strain",glass:"Coupe",garnish:"1x Raspberry",funFact:"A berry-forward pre-prohibition take on a Gin Sour.",tags:["shake"],allergens:[]},
+  {id:"cosmopolitan",name:"Cosmopolitan",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka (Citrus)"},{qty:"25 ml",item:"Triple Sec"},{qty:"30 ml",item:"Cranberry Juice"},{qty:"15 ml",item:"Lime Juice"}],method:"Shake & double strain",glass:"Martini",garnish:"Orange Twist",funFact:"A late 20th-century queer classic, now a staple in all cocktail bars.",tags:["shake"],allergens:[]},
+  {id:"cuba-libre",name:"Cuba Libre",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"10 ml",item:"Lime Juice (fresh)"},{qty:"top with",item:"Cola"}],method:"Build",glass:"Highball",garnish:"Lime Wedge",funFact:"The original rum-and-coke, over a century old, created in Havana, Cuba.",tags:["build"],allergens:[]},
+  {id:"daiquiri",name:"Daiquiri",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"25 ml",item:"Lime Juice"},{qty:"10 ml",item:"Sugar Syrup"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lime Wheel",funFact:"One of the most important cocktails in history — simplicity perfected.",tags:["shake"],allergens:[]},
+  {id:"dark-stormy",name:"Dark & Stormy",category:"classic",ingredients:[{qty:"50 ml",item:"Dark Rum"},{qty:"top with",item:"Ginger Ale"}],method:"Build",glass:"Highball",garnish:"Lime Wedge",funFact:"The national drink of Bermuda, over 200 years old.",tags:["build"],allergens:[]},
+  {id:"espresso-martini",name:"Espresso Martini",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"2 shots",item:"Espresso"},{qty:"25 ml",item:"Coffee Liqueur"},{qty:"10 ml",item:"Sugar Syrup"}],method:"Shake & double strain",glass:"Coupe or Martini",garnish:"3x Coffee Beans",funFact:"The three coffee beans symbolise health, wealth, and happiness.",tags:["shake"],allergens:[]},
+  {id:"french-75",name:"French 75",category:"classic",ingredients:[{qty:"30 ml",item:"Gin"},{qty:"20 ml",item:"Lemon Juice (fresh)"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"top with",item:"Champagne"}],method:"Shake & double strain",glass:"Flute",garnish:"Lemon Twist",funFact:"Originally created in Paris, named soixante-quinze.",tags:["shake"],allergens:["Sulphites"]},
+  {id:"french-martini",name:"French Martini",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"20 ml",item:"Chambord"},{qty:"30 ml",item:"Pineapple Juice"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lemon Twist",funFact:"Not from France as the name implies, originated in New York.",tags:["shake"],allergens:[]},
+  {id:"gimlet",name:"Gimlet",category:"classic",ingredients:[{qty:"60 ml",item:"Gin"},{qty:"15 ml",item:"Lime Juice (fresh)"},{qty:"15 ml",item:"Sugar Syrup"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lime Wheel",funFact:"Allegedly named after a naval officer trying to reduce scurvy rates in his crew.",tags:["shake"],allergens:[]},
+  {id:"gin-basil-smash",name:"Gin Basil Smash",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"25 ml",item:"Lemon Juice (fresh)"},{qty:"20 ml",item:"Sugar Syrup"},{qty:"10x",item:"Basil Leaves"}],method:"Shake & double strain",glass:"Coupe",garnish:"No garnish",funFact:"Invented by a German bartender in 2008.",tags:["shake","muddle"],allergens:[]},
+  {id:"godfather",name:"Godfather",category:"classic",ingredients:[{qty:"50 ml",item:"Bourbon"},{qty:"25 ml",item:"Amaretto"}],method:"Stir",glass:"Rocks",garnish:"Orange Twist",funFact:"Named after the Brando & Pacino movie of the same name.",tags:["stir"],allergens:["Nuts"]},
+  {id:"irish-coffee",name:"Irish Coffee",category:"classic",ingredients:[{qty:"50 ml",item:"Irish Whiskey"},{qty:"5 ml",item:"Sugar Syrup"},{qty:"2 shots",item:"Espresso & Hot Water"},{qty:"40 ml",item:"Fresh Double Cream"}],method:"Build, shake cream & layer",glass:"Latte Glass",garnish:"3x Coffee Beans",funFact:"French coffee: cognac. Gaelic coffee: scotch. Calypso coffee: dark rum. Russian coffee: vodka.",tags:["build","layer"],allergens:["Milk"]},
+  {id:"manhattan",name:"Manhattan (Sweet)",category:"classic",ingredients:[{qty:"50 ml",item:"Bourbon or Rye"},{qty:"15 ml",item:"Sweet Vermouth"}],method:"Stir & strain",glass:"Martini",garnish:"Cherry",funFact:"So named because it only includes sweet vermouth.",tags:["stir"],allergens:["Sulphites"]},
+  {id:"margarita",name:"Margarita",category:"classic",ingredients:[{qty:"50 ml",item:"Tequila"},{qty:"25 ml",item:"Triple Sec"},{qty:"25 ml",item:"Lime Juice (fresh)"}],method:"Shake & double strain",glass:"Coupe",garnish:"Salt rim & lime",funFact:"The name means 'daisy' in Spanish, as the drink is a tequila-forward twist on a classic daisy.",tags:["shake"],allergens:[]},
+  {id:"mimosa",name:"Mimosa",category:"classic",ingredients:[{qty:"75 ml",item:"Orange Juice"},{qty:"75 ml",item:"Prosecco"}],method:"Build",glass:"Flute",garnish:"No garnish",funFact:"A classic brunch cocktail, originally from the Ritz in Paris.",tags:["build"],allergens:["Sulphites"]},
+  {id:"mojito",name:"Mojito (Classic)",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"4x",item:"Lime Wedges"},{qty:"10x",item:"Mint Leaves"},{qty:"top with",item:"Soda"},{qty:"",item:"Crushed Ice"}],method:"Muddle & churn",glass:"Highball",garnish:"Mint Sprig",funFact:"At least 500 years old.",tags:["muddle"],allergens:[]},
+  {id:"moscow-mule",name:"Moscow Mule",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"25 ml",item:"Lime Juice"},{qty:"½ bottle",item:"Ginger Ale"},{qty:"top with",item:"Soda"},{qty:"",item:"Crushed Ice"}],method:"Build",glass:"Highball",garnish:"Lime Wedge",funFact:"Invented in 1940s US to boost vodka and ginger ale sales.",tags:["build"],allergens:[]},
+  {id:"negroni",name:"Negroni",category:"classic",ingredients:[{qty:"25 ml",item:"Gin"},{qty:"25 ml",item:"Campari"},{qty:"25 ml",item:"Sweet Vermouth"}],method:"Stir",glass:"Rocks",garnish:"Orange Twist",funFact:"A variation is the Negroni Sbagliato, with prosecco instead of gin.",tags:["stir"],allergens:["Sulphites"]},
+  {id:"new-york-sour",name:"New York Sour",category:"classic",ingredients:[{qty:"50 ml",item:"Bourbon or Rye Whiskey"},{qty:"25 ml",item:"Lemon Juice"},{qty:"20 ml",item:"Sugar Syrup"},{qty:"few drops",item:"Foamer"},{qty:"15 ml",item:"Red Wine"}],method:"Wet & dry shake, float red wine",glass:"Rocks",garnish:"Lemon Twist",funFact:"A twist on a whiskey sour with red wine. Classically Maker's Mark is floated.",tags:["shake"],allergens:["Sulphites"]},
+  {id:"old-fashioned",name:"Old Fashioned (Classic)",category:"classic",ingredients:[{qty:"50 ml",item:"Bourbon or Rye Whiskey"},{qty:"1x",item:"Brown Sugar Cube"},{qty:"4x",item:"Angostura Bitters"},{qty:"2x",item:"Orange Bitters"}],method:"Stir",glass:"Rocks",garnish:"Orange Twist",funFact:"5-10ml brown sugar syrup made with a 2:1 ratio of sugar to boiling water can be used instead.",tags:["stir"],allergens:[]},
+  {id:"paloma",name:"Paloma",category:"classic",ingredients:[{qty:"50 ml",item:"Tequila"},{qty:"15 ml",item:"Lime Juice"},{qty:"pinch",item:"Salt"},{qty:"top with",item:"Pink Grapefruit Soda"}],method:"Build",glass:"Rocks",garnish:"Lime Wedge",funFact:"The national drink of Mexico.",tags:["build"],allergens:[]},
+  {id:"pina-colada",name:"Piña Colada",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"50 ml",item:"Pineapple Juice"},{qty:"25 ml",item:"Coconut Cream"},{qty:"15 ml",item:"Lime Juice"}],method:"Shake",glass:"Highball",garnish:"Lime Wheel",funFact:"If you like getting caught in the rain, or the national drink of Puerto Rico, this is the drink for you.",tags:["shake"],allergens:[]},
+  {id:"sazerac",name:"Sazerac",category:"classic",ingredients:[{qty:"50 ml",item:"Cognac"},{qty:"15 ml",item:"Absinthe"},{qty:"5 ml",item:"Sugar Syrup"},{qty:"3x",item:"Peychaud's Bitters"}],method:"Stir",glass:"Brandy",garnish:"Lemon Twist",funFact:"A New Orleans classic from the 1840s.",tags:["stir"],allergens:[]},
+  {id:"sex-on-the-beach",name:"Sex on the Beach",category:"classic",ingredients:[{qty:"25 ml",item:"Vodka"},{qty:"25 ml",item:"Peach Schnapps"},{qty:"50 ml",item:"Orange Juice"},{qty:"60 ml",item:"Cranberry Juice"},{qty:"",item:"Crushed Ice"}],method:"Build & churn",glass:"Highball",garnish:"Orange Slice",funFact:"A pillar of 1980s American drinks.",tags:["build"],allergens:[]},
+  {id:"sidecar",name:"Sidecar",category:"classic",ingredients:[{qty:"40 ml",item:"Cognac"},{qty:"30 ml",item:"Triple Sec"},{qty:"20 ml",item:"Lemon Juice"}],method:"Shake & strain",glass:"Coupe",garnish:"Orange Twist",funFact:"Originates from prohibition-era Paris when a soldier came to a bar in the sidecar of a motorbike.",tags:["shake"],allergens:[]},
+  {id:"singapore-sling",name:"Singapore Sling",category:"classic",ingredients:[{qty:"30 ml",item:"Gin"},{qty:"15 ml",item:"Cherry Liqueur"},{qty:"7.5 ml",item:"Triple Sec"},{qty:"7.5 ml",item:"Benedictine"},{qty:"50 ml",item:"Pineapple Juice"},{qty:"15 ml",item:"Lime Juice"},{qty:"10 ml",item:"Grenadine"},{qty:"2x dash",item:"Angostura Bitters"}],method:"Shake",glass:"Highball",garnish:"Cherry",funFact:"First invented in the Raffles Hotel, Singapore in 1915 by a bartender called Ngiam Tong Boon.",tags:["shake"],allergens:[]},
+  {id:"southside",name:"Southside",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"25 ml",item:"Lemon Juice"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"5x",item:"Mint Leaves"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lemon Twist",funFact:"Ascribed as being Al Capone's drink of choice.",tags:["shake"],allergens:[]},
+  {id:"tequila-sunrise",name:"Tequila Sunrise",category:"classic",ingredients:[{qty:"50 ml",item:"Tequila"},{qty:"15 ml",item:"Grenadine"},{qty:"top with",item:"Orange Juice"}],method:"Build & layer",glass:"Highball",garnish:"Orange Slice",funFact:"Popularised in the '70s by the Rolling Stones and the Eagles.",tags:["build"],allergens:[]},
+  {id:"tom-collins",name:"Tom Collins",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"25 ml",item:"Lemon Juice"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"top with",item:"Soda"}],method:"Build & layer",glass:"Highball",garnish:"Lime Wedge",funFact:"Originally made with Old Tom gin in the 19th century.",tags:["build"],allergens:[]},
+  {id:"tommys-margarita",name:"Tommy's Margarita",category:"classic",ingredients:[{qty:"60 ml",item:"Tequila"},{qty:"30 ml",item:"Lime Juice (fresh)"},{qty:"20 ml",item:"Agave Syrup"}],method:"Shake",glass:"Rocks",garnish:"Salt rim & lime",funFact:"A '90s twist on a classic marg from Tommy's bar in San Francisco.",tags:["shake"],allergens:[]},
+  {id:"whiskey-sour",name:"Whiskey Sour",category:"classic",ingredients:[{qty:"50 ml",item:"Whiskey"},{qty:"25 ml",item:"Lemon Juice"},{qty:"10 ml",item:"Sugar Syrup"},{qty:"few drops",item:"Foamer"}],method:"Wet & dry shake",glass:"Rocks",garnish:"Lemon Twist & Bitters",funFact:"Likely originated from soldiers mixing citrus with spirits to combat scurvy.",tags:["shake"],allergens:[]},
+  {id:"white-lady",name:"White Lady",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"30 ml",item:"Triple Sec"},{qty:"20 ml",item:"Lemon Juice (fresh)"}],method:"Shake",glass:"Coupe",garnish:"Lemon Twist",funFact:"Originally contained crème de menthe, in 1919.",tags:["shake"],allergens:[]},
+  {id:"white-russian",name:"White Russian",category:"classic",ingredients:[{qty:"25 ml",item:"Vodka"},{qty:"25 ml",item:"Coffee Liqueur"},{qty:"30 ml",item:"Double Cream"}],method:"Build, shake cream & layer",glass:"Coupe",garnish:"Chocolate Powder",funFact:"A creamy twist on a Black Russian.",tags:["build","layer"],allergens:["Milk"]},
+  {id:"zombie",name:"Zombie",category:"classic",ingredients:[{qty:"25 ml",item:"White Rum"},{qty:"25 ml",item:"Dark Rum"},{qty:"25 ml",item:"Lime Juice"},{qty:"75 ml",item:"Pineapple Juice"},{qty:"5 ml",item:"Grenadine"}],method:"Build & stir",glass:"Highball",garnish:"Orange Slice",funFact:"A classic 1930s Tiki hangover cure, strong enough to awaken the dead. Sometimes contains overproof rum.",tags:["build"],allergens:[]},
+  // BAR SPECIALS
+  {id:"baileys-espresso-martini",name:"Baileys Espresso Martini",category:"special",ingredients:[{qty:"50 ml",item:"Baileys"},{qty:"25 ml",item:"Absolut Vodka"},{qty:"1x",item:"Double Espresso"},{qty:"12.5 ml",item:"Cream"},{qty:"12.5 ml",item:"Chocolate Syrup"},{qty:"10 ml",item:"Sugar Syrup"}],method:"Shake & Strain",glass:"Martini",garnish:"3 Coffee Beans",funFact:"A rich, creamy twist on the classic espresso martini.",tags:["shake"],allergens:["Milk"]},
+  {id:"raspberry-rose-mojito",name:"Raspberry & Rose Mojito",category:"special",ingredients:[{qty:"50 ml",item:"Bacardi Carta Blanca"},{qty:"12.5 ml",item:"Raspberry Syrup"},{qty:"25 ml",item:"Lime Juice"},{qty:"10x",item:"Mint Leaves"},{qty:"top with",item:"LE Raspberry & Rose"}],method:"Build & churn (crushed ice)",glass:"Highball",garnish:"Mint Sprig",funFact:"A floral, fruity twist on the classic mojito.",tags:["build","muddle"],allergens:[]},
+  {id:"blackberry-margarita",name:"Blackberry Margarita",category:"special",ingredients:[{qty:"25 ml",item:"Altos Blanco"},{qty:"12.5 ml",item:"Blackberry Liqueur"},{qty:"12.5 ml",item:"Blue Curaçao"},{qty:"12.5 ml",item:"Sugar Syrup"},{qty:"12.5 ml",item:"Lime Juice"}],method:"Shake & Strain",glass:"Martini / Coupe",garnish:"Salt Rim",funFact:"A vibrant purple take on the margarita family.",tags:["shake"],allergens:[]},
+  {id:"peach-please-martini",name:"Peach Please Martini",category:"special",ingredients:[{qty:"25 ml",item:"Beefeater Dry Gin"},{qty:"25 ml",item:"Lillet Blanc"},{qty:"25 ml",item:"Peach Puree"},{qty:"12.5 ml",item:"Sugar Syrup"},{qty:"top with",item:"LE Peach & Jasmine"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lemon Slice",funFact:"A delicate, aromatic martini with stone fruit and floral notes.",tags:["shake"],allergens:[]},
+  {id:"tiki-mai-tai",name:"Tiki Mai Tai",category:"special",ingredients:[{qty:"30 ml",item:"Bacardi Carta Blanca"},{qty:"25 ml",item:"Cointreau"},{qty:"25 ml",item:"Orgeat (Almond Syrup)"},{qty:"25 ml",item:"Lime Juice"},{qty:"10 ml",item:"Dark Rum (float)"}],method:"Shake & strain, layer dark rum",glass:"Rocks",garnish:"Lime Wedge",funFact:"The name means 'the best' in Tahitian.",tags:["shake","layer"],allergens:["Nuts"]},
+  {id:"cherish-the-devil",name:"Cherish The Devil",category:"special",ingredients:[{qty:"25 ml",item:"Altos Blanco"},{qty:"25 ml",item:"Cherry Heering"},{qty:"25 ml",item:"Lime Juice"},{qty:"dash",item:"LE Tonic"}],method:"Build & Stir",glass:"Highball",garnish:"Lime Wedge",funFact:"A cherry-forward tequila long drink with bitter tonic notes.",tags:["build"],allergens:["Nuts"]},
+  {id:"raspberry-paloma",name:"Raspberry Paloma",category:"special",ingredients:[{qty:"50 ml",item:"Olmeca Altos Plata"},{qty:"25 ml",item:"Lime Juice"},{qty:"12.5 ml",item:"Raspberry Syrup"},{qty:"12.5 ml",item:"Sugar Syrup"},{qty:"top with",item:"LE Raspberry & Rose"}],method:"Build & stir",glass:"Coupe",garnish:"Salt Rim",funFact:"A berry-laced twist on Mexico's favourite cocktail.",tags:["build"],allergens:[]},
+  {id:"winter-sling",name:"Winter Sling",category:"special",ingredients:[{qty:"25 ml",item:"Beefeater Dry Gin"},{qty:"12.5 ml",item:"Cherry Heering"},{qty:"12.5 ml",item:"Grand Marnier"},{qty:"30 ml",item:"Pineapple Juice"},{qty:"3x dash",item:"Angostura Bitters"},{qty:"drizzle",item:"Grenadine"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lemon Slice",funFact:"A festive, warming take on the Singapore Sling.",tags:["shake"],allergens:["Nuts"]},
+  {id:"bar-old-fashioned",name:"Old Fashioned (Bar)",category:"special",ingredients:[{qty:"50 ml",item:"Jameson's Irish Whiskey"},{qty:"10 ml",item:"Sugar Syrup"},{qty:"3x dash",item:"Angostura Bitters"},{qty:"3x dash",item:"Orange Bitters"}],method:"Build & stir",glass:"Rocks",garnish:"Orange Twist",funFact:"Our house version using smooth Irish whiskey.",tags:["stir","build"],allergens:[]},
+  {id:"classic-negroni",name:"Classic Negroni (Bar)",category:"special",ingredients:[{qty:"25 ml",item:"Bombay Sapphire Gin"},{qty:"20 ml",item:"Martini Rubino"},{qty:"25 ml",item:"Campari"}],method:"Build & Stir",glass:"Rocks",garnish:"Orange Zest & Slice",funFact:"Our house Negroni using Bombay Sapphire and Martini Rubino.",tags:["stir","build"],allergens:["Sulphites"]},
+  {id:"cherry-disaronno-sour",name:"Cherry Disaronno Sour",category:"special",ingredients:[{qty:"25 ml",item:"Disaronno"},{qty:"15 ml",item:"Cherry Heering"},{qty:"50 ml",item:"Cranberry Juice"},{qty:"12.5 ml",item:"Lemon Juice"}],method:"Shake & Strain",glass:"Rocks",garnish:"Lime or Cherry",funFact:"A cherry-almond sour with a cranberry backbone.",tags:["shake"],allergens:["Nuts","Soya"]},
+  {id:"long-manhattan",name:"Long Manhattan",category:"special",ingredients:[{qty:"25 ml",item:"Chivas Regal"},{qty:"10 ml",item:"Martini Rubino"},{qty:"5 ml",item:"Grenadine"},{qty:"dash",item:"LE Orange & Fig"}],method:"Build & Stir",glass:"Highball",garnish:"Lemon",funFact:"A refreshing, long format take on the classic Manhattan.",tags:["build"],allergens:["Sulphites"]},
+  {id:"pink-grapefruit-aperol-spritz",name:"Pink Grapefruit Aperol Spritz",category:"special",ingredients:[{qty:"50 ml",item:"Aperol"},{qty:"75 ml",item:"Prosecco"},{qty:"dash",item:"LE Pink Grapefruit Soda"}],method:"Build",glass:"Wine Glass",garnish:"Grapefruit Zest / Wheel",funFact:"A citrus-forward upgrade on the classic Aperol Spritz.",tags:["build"],allergens:["Sulphites"]},
+  {id:"hugo-spritz",name:"Hugo Spritz",category:"special",ingredients:[{qty:"50 ml",item:"St Germain"},{qty:"75 ml",item:"Prosecco"},{qty:"dash",item:"Soda Water"}],method:"Build",glass:"Wine Glass",garnish:"Lime Slices & Mint",funFact:"A floral, elderflower-driven spritz from Northern Italy.",tags:["build"],allergens:["Sulphites"]},
+  {id:"bombay-presse-spritz",name:"Bombay Presse Spritz",category:"special",ingredients:[{qty:"50 ml",item:"Bombay Lemon"},{qty:"75 ml",item:"Prosecco"},{qty:"dash",item:"Fresh Lemon Juice"},{qty:"dash",item:"Soda"}],method:"Build",glass:"Wine Glass",garnish:"Lemon Slices & Mint",funFact:"A citrus-gin spritz with Bombay's lemon-infused gin.",tags:["build"],allergens:["Sulphites"]},
+  // TASTECARDS / NO-ALc / LOW-ALC
+  {id:"floradora",name:"Floradora",category:"noalc",ingredients:[{qty:"50 ml",item:"Everleaf Mountain"},{qty:"10 ml",item:"Lime Juice"},{qty:"10 ml",item:"Raspberry Syrup"},{qty:"top",item:"London Essence Ginger Beer"}],method:"Build",glass:"Highball",garnish:"Raspberry",funFact:"A fruity, sharp, sweet non-alcoholic refresher.",tags:["build"],allergens:[]},
+  {id:"peach-spritz",name:"Peach Spritz",category:"special",ingredients:[{qty:"35 ml",item:"Absolut Vodka"},{qty:"12.5 ml",item:"Cane Syrup"},{qty:"25 ml",item:"Lemon Juice"},{qty:"top",item:"LE White Peach & Jasmine Soda"}],method:"Build & Stir",glass:"Wine Glass",garnish:"None",funFact:"A peachy, effervescent, floral spritz.",tags:["build"],allergens:[]},
+  {id:"french-spritz",name:"French Spritz",category:"lowalc",ingredients:[{qty:"50 ml",item:"Lillet"},{qty:"12.5 ml",item:"Martini Ambrato"},{qty:"50 ml",item:"Apple Juice"},{qty:"50 ml",item:"Prosecco"}],method:"Build, top with Prosecco, stir",glass:"Wine Glass",garnish:"None",funFact:"A light, floral, effervescent low-alcohol spritz.",tags:["build"],allergens:["Sulphites"]},
+  {id:"celtic-garden",name:"Celtic Garden",category:"noalc",ingredients:[{qty:"50 ml",item:"Everleaf Mountain"},{qty:"25 ml",item:"Lemon Juice"},{qty:"20 ml",item:"Blood Orange Syrup"},{qty:"top",item:"Blood Orange & Elderflower Tonic"}],method:"Build",glass:"Balloon Glass",garnish:"Lemon Slice",funFact:"A complex, botanical non-alcoholic cocktail with citrus depth.",tags:["build"],allergens:[]},
+];
+
+// ============================================
+// FORMULAS
+// ============================================
+const FORMULAS = [
+  {
+    name:"The Sour",
+    icon:"&#127819;",
+    iconBg:"linear-gradient(135deg,#f43f5e,#e11d48)",
+    desc:"Spirit + Citrus + Sweet. The foundation of countless classics.",
+    equation:[{t:"Spirit",c:"f-spirit"},{t:"+",c:"f-plus"},{t:"Citrus",c:"f-citrus"},{t:"+",c:"f-plus"},{t:"Sweet",c:"f-sweet"}],
+    ratio:[{pct:55,color:"#f43f5e",label:"Spirit"},{pct:25,color:"#2dd4bf",label:"Citrus"},{pct:20,color:"#d4a543",label:"Sweet"}],
+    cocktails:["Daiquiri","Whiskey Sour","Amaretto Sour","Gimlet","Margarita","Sidecar","Cosmopolitan","White Lady"]
+  },
+  {
+    name:"The Spritz",
+    icon:"&#127863;",
+    iconBg:"linear-gradient(135deg,#f97316,#ea580c)",
+    desc:"Aperitif + Sparkling + Soda. Light, bubbly, and refreshing.",
+    equation:[{t:"Aperitif",c:"f-spirit"},{t:"+",c:"f-plus"},{t:"Sparkling",c:"f-top"},{t:"+",c:"f-plus"},{t:"Soda",c:"f-mod"}],
+    ratio:[{pct:35,color:"#f97316",label:"Aperitif"},{pct:50,color:"#d4a543",label:"Sparkling"},{pct:15,color:"#3b82f6",label:"Soda"}],
+    cocktails:["Aperol Spritz","Hugo Spritz","French Spritz","Bombay Presse Spritz","Pink Grapefruit Aperol Spritz"]
+  },
+  {
+    name:"The Old Fashioned",
+    icon:"&#129347;",
+    iconBg:"linear-gradient(135deg,#92400e,#78350f)",
+    desc:"Spirit + Sugar + Bitters. The original cocktail template.",
+    equation:[{t:"Spirit",c:"f-spirit"},{t:"+",c:"f-plus"},{t:"Sugar",c:"f-sweet"},{t:"+",c:"f-plus"},{t:"Bitters",c:"f-mod"}],
+    ratio:[{pct:70,color:"#f43f5e",label:"Spirit"},{pct:15,color:"#d4a543",label:"Sugar"},{pct:15,color:"#9b6dff",label:"Bitters"}],
+    cocktails:["Old Fashioned","Sazerac"]
+  },
+  {
+    name:"The Highball",
+    icon:"&#127864;",
+    iconBg:"linear-gradient(135deg,#2dd4bf,#0d9488)",
+    desc:"Spirit + Mixer. Simple, long, and sessionable.",
+    equation:[{t:"Spirit",c:"f-spirit"},{t:"+",c:"f-plus"},{t:"Mixer/Top",c:"f-top"}],
+    ratio:[{pct:30,color:"#f43f5e",label:"Spirit"},{pct:70,color:"#3b82f6",label:"Mixer"}],
+    cocktails:["Cuba Libre","Dark & Stormy","Moscow Mule","Tom Collins","Blue Lagoon","Tequila Sunrise","Paloma"]
+  },
+  {
+    name:"The Martini Family",
+    icon:"&#127864;",
+    iconBg:"linear-gradient(135deg,#6c3fc5,#5b21b6)",
+    desc:"Spirit + Modifier. Stirred, strong, and spirit-forward.",
+    equation:[{t:"Spirit",c:"f-spirit"},{t:"+",c:"f-plus"},{t:"Modifier",c:"f-mod"}],
+    ratio:[{pct:65,color:"#f43f5e",label:"Spirit"},{pct:35,color:"#9b6dff",label:"Modifier"}],
+    cocktails:["Manhattan","Negroni","Godfather","Black Russian"]
+  },
+  {
+    name:"The Fizz / Collins",
+    icon:"&#129380;",
+    iconBg:"linear-gradient(135deg,#3b82f6,#2563eb)",
+    desc:"Sour + Soda. A sour lengthened with fizz.",
+    equation:[{t:"Spirit",c:"f-spirit"},{t:"+",c:"f-plus"},{t:"Citrus",c:"f-citrus"},{t:"+",c:"f-plus"},{t:"Sweet",c:"f-sweet"},{t:"+",c:"f-plus"},{t:"Soda",c:"f-top"}],
+    ratio:[{pct:40,color:"#f43f5e",label:"Spirit"},{pct:20,color:"#2dd4bf",label:"Citrus"},{pct:15,color:"#d4a543",label:"Sweet"},{pct:25,color:"#3b82f6",label:"Soda"}],
+    cocktails:["Tom Collins","French 75","Mojito","Southside"]
+  },
+  {
+    name:"The Tiki",
+    icon:"&#127796;",
+    iconBg:"linear-gradient(135deg,#f59e0b,#d97706)",
+    desc:"Rum(s) + Citrus + Tropical + Syrup. Bold, layered, exotic.",
+    equation:[{t:"Rum",c:"f-spirit"},{t:"+",c:"f-plus"},{t:"Citrus",c:"f-citrus"},{t:"+",c:"f-plus"},{t:"Tropical",c:"f-top"},{t:"+",c:"f-plus"},{t:"Syrup",c:"f-sweet"}],
+    ratio:[{pct:30,color:"#f43f5e",label:"Rum"},{pct:20,color:"#2dd4bf",label:"Citrus"},{pct:35,color:"#f59e0b",label:"Tropical"},{pct:15,color:"#d4a543",label:"Syrup"}],
+    cocktails:["Zombie","Piña Colada","Tiki Mai Tai","Singapore Sling"]
+  },
+  {
+    name:"The Cream Cocktail",
+    icon:"&#9749;",
+    iconBg:"linear-gradient(135deg,#a8a29e,#78716c)",
+    desc:"Spirit + Liqueur + Cream. Rich, dessert-like, layered.",
+    equation:[{t:"Spirit",c:"f-spirit"},{t:"+",c:"f-plus"},{t:"Liqueur",c:"f-mod"},{t:"+",c:"f-plus"},{t:"Cream",c:"f-sweet"}],
+    ratio:[{pct:35,color:"#f43f5e",label:"Spirit"},{pct:30,color:"#9b6dff",label:"Liqueur"},{pct:35,color:"#d4a543",label:"Cream"}],
+    cocktails:["White Russian","Alexander","Irish Coffee","Baileys Espresso Martini"]
+  }
+];
+
+// ============================================
+// GAME STATE
+// ============================================
+let state = JSON.parse(localStorage.getItem('barwizz-state')) || {
+  xp:0, level:1, streak:0, lastActive:null,
+  totalQuizzes:0, totalCorrect:0, totalAnswered:0,
+  cocktailScores:{}, // id -> {seen, correct, wrong, lastSeen}
+  achievements:[],
+  quizHighScores:{},
+};
+
+function saveState(){localStorage.setItem('barwizz-state',JSON.stringify(state))}
+
+const LEVELS = [
+  {level:1,title:"Barback",xp:0},
+  {level:2,title:"Apprentice",xp:100},
+  {level:3,title:"Bar Porter",xp:250},
+  {level:4,title:"Junior Bartender",xp:500},
+  {level:5,title:"Bartender",xp:800},
+  {level:6,title:"Senior Bartender",xp:1200},
+  {level:7,title:"Head Bartender",xp:1800},
+  {level:8,title:"Mixologist",xp:2500},
+  {level:9,title:"Master Mixologist",xp:3500},
+  {level:10,title:"Bar Wizard",xp:5000},
+];
+
+const ACHIEVEMENTS_DEF = [
+  {id:"first-flip",name:"First Flip",desc:"Complete your first flashcard",icon:"&#127183;",condition:s=>s.totalAnswered>=1},
+  {id:"ten-correct",name:"Sharp Mind",desc:"Get 10 quiz answers correct",icon:"&#129504;",condition:s=>s.totalCorrect>=10},
+  {id:"fifty-correct",name:"Walking Encyclopedia",desc:"Get 50 quiz answers correct",icon:"&#128218;",condition:s=>s.totalCorrect>=50},
+  {id:"perfect-quiz",name:"Perfect Round",desc:"Score 100% on any quiz",icon:"&#127775;",condition:s=>s.quizHighScores&&Object.values(s.quizHighScores).some(v=>v>=100)},
+  {id:"all-seen",name:"Menu Master",desc:"Study every cocktail at least once",icon:"&#127942;",condition:s=>Object.keys(s.cocktailScores).length>=COCKTAILS.length},
+  {id:"streak-3",name:"On a Roll",desc:"Maintain a 3-day streak",icon:"&#128293;",condition:s=>s.streak>=3},
+  {id:"streak-7",name:"Dedicated",desc:"Maintain a 7-day streak",icon:"&#11088;",condition:s=>s.streak>=7},
+  {id:"level-5",name:"Bartender Status",desc:"Reach Level 5",icon:"&#127870;",condition:s=>s.level>=5},
+  {id:"hundred-answers",name:"Centurion",desc:"Answer 100 questions total",icon:"&#128170;",condition:s=>s.totalAnswered>=100},
+  {id:"level-10",name:"Bar Wizard",desc:"Reach the maximum level",icon:"&#129497;",condition:s=>s.level>=10},
+];
+
+// ============================================
+// CORE FUNCTIONS
+// ============================================
+function addXP(amount){
+  state.xp += amount;
+  let currentLevel = LEVELS.filter(l=>state.xp >= l.xp).pop();
+  if(currentLevel && currentLevel.level > state.level){
+    state.level = currentLevel.level;
+    showToast(`Level Up! You're now Level ${state.level}: ${currentLevel.title}`,'achievement');
+    fireConfetti();
+  }
+  saveState();
+  updateUI();
+}
+
+function updateUI(){
+  let currentLevel = LEVELS.filter(l=>state.xp >= l.xp).pop() || LEVELS[0];
+  let nextLevel = LEVELS.find(l=>l.xp > state.xp) || LEVELS[LEVELS.length-1];
+  let progress = nextLevel.xp > currentLevel.xp
+    ? ((state.xp - currentLevel.xp) / (nextLevel.xp - currentLevel.xp)) * 100
+    : 100;
+
+  document.getElementById('levelBadge').textContent = state.level;
+  document.getElementById('playerName').textContent = currentLevel.title;
+  document.getElementById('playerTitle').textContent = `Level ${state.level}`;
+  document.getElementById('xpFill').style.width = progress + '%';
+  document.getElementById('xpText').textContent = `${state.xp} / ${nextLevel.xp} XP`;
+  document.getElementById('streakCount').textContent = state.streak;
+
+  document.getElementById('statCocktails').textContent = Object.keys(state.cocktailScores).length;
+  document.getElementById('statQuizzes').textContent = state.totalQuizzes;
+  document.getElementById('statAccuracy').textContent = state.totalAnswered > 0
+    ? Math.round((state.totalCorrect/state.totalAnswered)*100) + '%' : '0%';
+  document.getElementById('statXP').textContent = state.xp;
+
+  document.getElementById('recipeCount').textContent = COCKTAILS.length;
+  document.getElementById('totalRecipes').textContent = COCKTAILS.length;
+
+  checkAchievements();
+}
+
+function checkStreak(){
+  const today = new Date().toDateString();
+  if(state.lastActive){
+    const last = new Date(state.lastActive);
+    const diff = Math.floor((new Date(today) - last) / 86400000);
+    if(diff === 1) state.streak++;
+    else if(diff > 1) state.streak = 1;
+  } else {
+    state.streak = 1;
+  }
+  state.lastActive = today;
+  saveState();
+}
+
+function trackCocktail(id, correct){
+  if(!state.cocktailScores[id]) state.cocktailScores[id] = {seen:0,correct:0,wrong:0};
+  state.cocktailScores[id].seen++;
+  state.cocktailScores[id].lastSeen = Date.now();
+  if(correct) state.cocktailScores[id].correct++;
+  else state.cocktailScores[id].wrong++;
+  saveState();
+}
+
+function getWeakCocktails(){
+  return COCKTAILS.filter(c => {
+    const s = state.cocktailScores[c.id];
+    if(!s) return true;
+    return s.correct / (s.seen||1) < 0.6;
+  });
+}
+
+// ============================================
+// NAVIGATION
+// ============================================
+function navigateTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
+
+  if(page === 'recipes') renderRecipes();
+  if(page === 'flashcards') initFlashcards();
+  if(page === 'formulas') renderFormulas();
+  if(page === 'academy') setAcademyTab(document.querySelector('.academy-tab.active'),'methods');
+  if(page === 'quiz') showQuizMenu();
+  if(page === 'simulation') showSimMenu();
+  if(page === 'achievements') renderAchievements();
+
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>navigateTo(item.dataset.page));
+});
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ============================================
+// TOAST NOTIFICATIONS
+// ============================================
+function showToast(msg, type='xp'){
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  const icons = {xp:'&#11088;',achievement:'&#127942;',success:'&#9989;',error:'&#10060;'};
+  t.innerHTML = `<span>${icons[type]||''}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(()=>t.remove(),300)},3000);
+}
+
+// ============================================
+// CONFETTI
+// ============================================
+function fireConfetti(){
+  const c = document.getElementById('confettiContainer');
+  const colors = ['#d4a543','#f43f5e','#6c3fc5','#2dd4bf','#3b82f6','#22c55e','#f97316'];
+  for(let i=0;i<60;i++){
+    const p = document.createElement('div');
+    p.className='confetti-piece';
+    p.style.left = Math.random()*100+'%';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay = Math.random()*0.5+'s';
+    p.style.animationDuration = (2+Math.random()*2)+'s';
+    p.style.borderRadius = Math.random()>0.5?'50%':'2px';
+    p.style.width = (4+Math.random()*8)+'px';
+    p.style.height = (4+Math.random()*8)+'px';
+    c.appendChild(p);
+    setTimeout(()=>p.remove(),4000);
+  }
+}
+
+// ============================================
+// RECIPE BOOK
+// ============================================
+let currentFilter = 'all';
+
+function renderRecipes(){
+  const grid = document.getElementById('recipeGrid');
+  const search = document.getElementById('recipeSearch').value.toLowerCase();
+
+  let filtered = COCKTAILS.filter(c => {
+    if(currentFilter !== 'all' && !c.tags.includes(currentFilter)) return false;
+    if(search){
+      const haystack = (c.name + ' ' + c.ingredients.map(i=>i.item).join(' ') + ' ' + c.method + ' ' + c.glass).toLowerCase();
+      return haystack.includes(search);
+    }
+    return true;
+  });
+
+  grid.innerHTML = filtered.map(c => {
+    const methodClass = c.tags[0] || 'build';
+    const score = state.cocktailScores[c.id];
+    const mastery = score ? Math.min(100,Math.round((score.correct/Math.max(score.seen,1))*100)) : 0;
+    return `
+      <div class="recipe-card" onclick="showRecipeDetail('${c.id}')">
+        <div class="recipe-card-header">
+          <div>
+            <h3>${c.name}</h3>
+            <span class="recipe-glass">${c.glass}</span>
+          </div>
+          ${mastery > 0 ? `<span style="color:${mastery>=80?'var(--green)':mastery>=50?'var(--gold)':'var(--rose)'};font-size:0.75rem;font-weight:700">${mastery}%</span>` : ''}
+        </div>
+        <div class="recipe-tags">
+          ${c.tags.map(t=>`<span class="tag tag-${t}">${t}</span>`).join('')}
+          ${c.category==='special'?'<span class="tag" style="background:rgba(212,165,67,0.15);color:var(--gold)">House Special</span>':''}
+          ${c.category==='noalc'?'<span class="tag" style="background:rgba(34,197,94,0.15);color:var(--green)">No Alcohol</span>':''}
+          ${c.category==='lowalc'?'<span class="tag" style="background:rgba(59,130,246,0.15);color:var(--blue)">Low Alcohol</span>':''}
+        </div>
+        <div class="ingredients-preview">
+          ${c.ingredients.slice(0,4).map(i=>`<span>${i.qty?i.qty+' ':''}${i.item}</span>`).join('')}
+          ${c.ingredients.length>4?`<span>+${c.ingredients.length-4} more</span>`:''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterRecipes(){renderRecipes()}
+function setFilter(el, filter){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  currentFilter = filter;
+  renderRecipes();
+}
+
+function showRecipeDetail(id){
+  const c = COCKTAILS.find(x=>x.id===id);
+  if(!c) return;
+  const modal = document.getElementById('recipeModal');
+  const content = document.getElementById('recipeDetailContent');
+
+  const glassEmojis = {'Rocks':'&#129347;','Highball':'&#129380;','Coupe':'&#127864;','Martini':'&#127864;','Wine Glass':'&#127863;','Flute':'&#129379;','Shot':'&#129380;','Latte Glass':'&#9749;','Brandy':'&#127864;','Large Wine Glass':'&#127863;','Martini / Coupe':'&#127864;','Coupe or Martini':'&#127864;','Balloon Glass':'&#127864;'};
+  const glassEmoji = glassEmojis[c.glass] || '&#127864;';
+
+  content.innerHTML = `
+    <div class="recipe-detail-header">
+      <div class="recipe-detail-glass">${glassEmoji}</div>
+      <div>
+        <h2>${c.name}</h2>
+        <div class="recipe-meta">${c.glass} &bull; ${c.method} &bull; Garnish: ${c.garnish}</div>
+      </div>
+    </div>
+    ${c.funFact ? `<div class="recipe-fun-fact">"${c.funFact}"</div>` : ''}
+    <table class="ingredient-table">
+      <thead><tr><th>QTY</th><th>INGREDIENT</th></tr></thead>
+      <tbody>
+        ${c.ingredients.map(i=>`<tr><td class="qty">${i.qty||'-'}</td><td>${i.item}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    <div class="method-steps">
+      <h4>Method: ${c.method}</h4>
+    </div>
+    ${c.allergens&&c.allergens.length?`<p style="font-size:0.78rem;color:var(--rose)">Allergens: ${c.allergens.join(', ')}</p>`:''}
+    <div style="margin-top:20px;display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="document.getElementById('recipeModal').classList.remove('active')">Close</button>
+      <button class="btn btn-secondary" onclick="startFlashcardFor('${c.id}')">Practice Flashcard</button>
+    </div>
+  `;
+  modal.classList.add('active');
+}
+
+document.getElementById('recipeModal').addEventListener('click',function(e){
+  if(e.target===this) this.classList.remove('active');
+});
+
+// ============================================
+// FLASHCARDS
+// ============================================
+let fcDeck = [];
+let fcIndex = 0;
+let fcScore = 0;
+let fcFlipped = false;
+
+function initFlashcards(filter='all'){
+  fcDeck = shuffleArray(getFilteredDeck(filter)).slice(0,15);
+  fcIndex = 0;
+  fcScore = 0;
+  fcFlipped = false;
+  showCurrentFlashcard();
+}
+
+function getFilteredDeck(filter){
+  if(filter === 'weak') return getWeakCocktails();
+  if(filter === 'classics') return COCKTAILS.filter(c=>c.category==='classic');
+  if(filter === 'specials') return COCKTAILS.filter(c=>c.category==='special' || c.category==='noalc' || c.category==='lowalc');
+  return [...COCKTAILS];
+}
+
+function showCurrentFlashcard(){
+  if(fcIndex >= fcDeck.length){
+    showToast(`Flashcard round complete! Score: ${fcScore}/${fcDeck.length}`,'success');
+    addXP(fcScore * 5);
+    initFlashcards();
+    return;
+  }
+  const c = fcDeck[fcIndex];
+  const card = document.getElementById('currentFlashcard');
+  card.classList.remove('flipped');
+  fcFlipped = false;
+
+  document.getElementById('fcName').textContent = c.name;
+  document.getElementById('fcHint').textContent = c.tags.map(t=>t.toUpperCase()).join(' & ') + ' \u2022 ' + c.glass;
+  document.getElementById('fcBackName').textContent = c.name;
+  document.getElementById('fcIngredients').innerHTML = c.ingredients.map(i=>
+    `<div class="fc-ingredient"><span>${i.item}</span><span class="fc-qty">${i.qty||''}</span></div>`
+  ).join('');
+  document.getElementById('fcDetails').innerHTML = `
+    <div class="fc-detail-item"><div class="fc-detail-label">Method</div>${c.method}</div>
+    <div class="fc-detail-item"><div class="fc-detail-label">Glass</div>${c.glass}</div>
+    <div class="fc-detail-item"><div class="fc-detail-label">Garnish</div>${c.garnish}</div>
+  `;
+
+  document.getElementById('fcProgress').textContent = `${fcIndex+1} / ${fcDeck.length}`;
+  document.getElementById('fcProgressFill').style.width = ((fcIndex+1)/fcDeck.length*100)+'%';
+  document.getElementById('fcScore').textContent = `Score: ${fcScore}`;
+}
+
+function flipCard(){
+  fcFlipped = !fcFlipped;
+  document.getElementById('currentFlashcard').classList.toggle('flipped', fcFlipped);
+}
+
+function rateFlashcard(rating){
+  if(!fcFlipped) flipCard();
+  setTimeout(()=>{
+    const c = fcDeck[fcIndex];
+    const correct = rating >= 2;
+    trackCocktail(c.id, correct);
+    state.totalAnswered++;
+    if(correct) { state.totalCorrect++; fcScore++; }
+    saveState();
+    fcIndex++;
+    showCurrentFlashcard();
+    updateUI();
+  }, 300);
+}
+
+function setFcFilter(el, filter){
+  el.parentElement.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  initFlashcards(filter);
+}
+
+function startFlashcards(filter){
+  navigateTo('flashcards');
+  setTimeout(()=>initFlashcards(filter),100);
+}
+
+function startFlashcardFor(id){
+  document.getElementById('recipeModal').classList.remove('active');
+  navigateTo('flashcards');
+  const c = COCKTAILS.find(x=>x.id===id);
+  if(c) { fcDeck = [c]; fcIndex = 0; fcScore = 0; fcFlipped = false; showCurrentFlashcard(); }
+}
+
+// ============================================
+// FORMULA LAB
+// ============================================
+function renderFormulas(){
+  document.getElementById('formulaGrid').innerHTML = FORMULAS.map(f => `
+    <div class="formula-card">
+      <div class="formula-header">
+        <div class="formula-icon" style="background:${f.iconBg}">${f.icon}</div>
+        <div>
+          <div class="formula-name">${f.name}</div>
+          <div class="formula-desc">${f.desc}</div>
+        </div>
+      </div>
+      <div class="formula-equation">
+        ${f.equation.map(e=>`<span class="${e.c}">${e.t}</span>`).join('')}
+      </div>
+      <div class="ratio-bar">
+        ${f.ratio.map(r=>`<div class="ratio-segment" style="width:${r.pct}%;background:${r.color}" title="${r.label}: ${r.pct}%">${r.pct}%</div>`).join('')}
+      </div>
+      <div class="formula-cocktails">
+        ${f.cocktails.map(c=>{
+          const cocktail = COCKTAILS.find(x=>x.name===c||x.name.startsWith(c));
+          return `<span class="formula-cocktail-tag" ${cocktail?`onclick="showRecipeDetail('${cocktail.id}')"`:''}>${c}</span>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================
+// ACADEMY
+// ============================================
+function setAcademyTab(el, tab){
+  document.querySelectorAll('.academy-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderAcademyContent(tab);
+}
+
+function renderAcademyContent(tab){
+  const content = document.getElementById('academyContent');
+
+  if(tab === 'methods'){
+    content.innerHTML = `
+      <div class="method-grid">
+        <div class="method-card">
+          <div class="method-visual">&#127944;</div>
+          <h3>Shake</h3>
+          <p>For cocktails with citrus juice, dairy, or egg. Vigorously shake for 10-15 seconds with ice. <strong>Chills, dilutes, and aerates.</strong></p>
+          <p><strong>Wet shake:</strong> With ice. <strong>Dry shake:</strong> Without ice (for foamer/egg white first). <strong>Double strain</strong> through a Hawthorne and fine mesh strainer.</p>
+          <div class="cocktail-examples">${COCKTAILS.filter(c=>c.tags.includes('shake')).slice(0,8).map(c=>`<span>${c.name}</span>`).join('')}</div>
+        </div>
+        <div class="method-card">
+          <div class="method-visual">&#129380;</div>
+          <h3>Build</h3>
+          <p>Pour ingredients directly into the serving glass over ice. The simplest method. <strong>No additional tools needed.</strong></p>
+          <p>Often followed by a gentle stir. Best for spirit + mixer drinks and spritzes.</p>
+          <div class="cocktail-examples">${COCKTAILS.filter(c=>c.tags.includes('build')).slice(0,8).map(c=>`<span>${c.name}</span>`).join('')}</div>
+        </div>
+        <div class="method-card">
+          <div class="method-visual">&#127380;</div>
+          <h3>Stir</h3>
+          <p>For spirit-forward cocktails with no citrus or dairy. Stir with bar spoon for 20-30 seconds with ice. <strong>Chills and dilutes gently without aerating.</strong></p>
+          <p>Produces a silky, crystal-clear drink. Strain into a chilled glass.</p>
+          <div class="cocktail-examples">${COCKTAILS.filter(c=>c.tags.includes('stir')).slice(0,8).map(c=>`<span>${c.name}</span>`).join('')}</div>
+        </div>
+        <div class="method-card">
+          <div class="method-visual">&#129746;</div>
+          <h3>Muddle</h3>
+          <p>Press fresh ingredients (fruit, herbs) gently in the glass to release oils and juice. <strong>Don't over-muddle herbs</strong> — you want oils, not bitter chlorophyll.</p>
+          <p>Usually followed by churning with crushed ice.</p>
+          <div class="cocktail-examples">${COCKTAILS.filter(c=>c.tags.includes('muddle')).slice(0,4).map(c=>`<span>${c.name}</span>`).join('')}</div>
+        </div>
+        <div class="method-card">
+          <div class="method-visual">&#127752;</div>
+          <h3>Layer</h3>
+          <p>Pour ingredients over the back of a bar spoon so they float on top of each other. <strong>Heaviest liquid first, lightest last.</strong></p>
+          <p>Used for visual effect — Baby Guinness, floated cream, dark rum floats.</p>
+          <div class="cocktail-examples">${COCKTAILS.filter(c=>c.tags.includes('layer')).slice(0,4).map(c=>`<span>${c.name}</span>`).join('')}</div>
+        </div>
+        <div class="method-card">
+          <div class="method-visual">&#128168;</div>
+          <h3>Churn</h3>
+          <p>Mix ingredients by stirring them through crushed ice with a bar spoon. <strong>Creates a slushy, refreshing texture.</strong></p>
+          <p>Common in mojitos and tropical drinks. Different from shaking — gentler integration.</p>
+          <div class="cocktail-examples"><span>Mojito</span><span>Sex on the Beach</span><span>Raspberry & Rose Mojito</span></div>
+        </div>
+      </div>
+    `;
+  } else if(tab === 'glassware'){
+    content.innerHTML = `
+      <div class="glass-grid">
+        <div class="glass-card"><div class="glass-visual">&#129347;</div><h4>Rocks / Old Fashioned</h4><p>Short, wide, sturdy. For spirit-forward drinks served over ice. Holds 200-300ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">&#129380;</div><h4>Highball</h4><p>Tall, straight-sided. For long drinks with mixers. Holds 300-350ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">&#127864;</div><h4>Coupe</h4><p>Shallow, broad bowl. Elegant choice for shaken cocktails served up (no ice). Holds 150-200ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">&#127864;</div><h4>Martini</h4><p>Iconic V-shape. For stirred or shaken cocktails served up. Holds 150-200ml. Prone to spilling!</p></div>
+        <div class="glass-card"><div class="glass-visual">&#127863;</div><h4>Wine Glass</h4><p>Large bowl shape. Used for spritzes and wine-based cocktails. Holds 350-500ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">&#129379;</div><h4>Flute</h4><p>Tall, narrow. Preserves bubbles for champagne cocktails. Holds 150-200ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">&#129380;</div><h4>Shot Glass</h4><p>Small, straight. For shooters and layered shots. Holds 25-50ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">&#9749;</div><h4>Latte / Irish Coffee</h4><p>Heatproof glass with handle. For hot cocktails. Holds 200-250ml.</p></div>
+      </div>
+    `;
+  } else if(tab === 'spirits'){
+    const spiritFamilies = [
+      {name:"Vodka",icon:"&#129472;",base:"Neutral grain or potato spirit",cocktails:COCKTAILS.filter(c=>c.ingredients.some(i=>i.item.toLowerCase().includes('vodka')))},
+      {name:"Gin",icon:"&#127807;",base:"Juniper-flavoured spirit",cocktails:COCKTAILS.filter(c=>c.ingredients.some(i=>i.item.toLowerCase().includes('gin')&&!i.item.toLowerCase().includes('ginger')))},
+      {name:"Rum",icon:"&#127796;",base:"Sugarcane / molasses spirit",cocktails:COCKTAILS.filter(c=>c.ingredients.some(i=>i.item.toLowerCase().includes('rum')||i.item.toLowerCase().includes('bacardi')))},
+      {name:"Tequila / Mezcal",icon:"&#127797;",base:"Agave spirit from Mexico",cocktails:COCKTAILS.filter(c=>c.ingredients.some(i=>i.item.toLowerCase().includes('tequila')||i.item.toLowerCase().includes('altos')||i.item.toLowerCase().includes('olmeca')))},
+      {name:"Whiskey",icon:"&#127866;",base:"Aged grain spirit (bourbon, rye, scotch, Irish)",cocktails:COCKTAILS.filter(c=>c.ingredients.some(i=>i.item.toLowerCase().includes('whiskey')||i.item.toLowerCase().includes('bourbon')||i.item.toLowerCase().includes('rye')||i.item.toLowerCase().includes('jameson')||i.item.toLowerCase().includes('chivas')))},
+      {name:"Cognac / Brandy",icon:"&#127863;",base:"Distilled grape wine, aged in oak",cocktails:COCKTAILS.filter(c=>c.ingredients.some(i=>i.item.toLowerCase().includes('cognac')||i.item.toLowerCase().includes('brandy')))},
+    ];
+    content.innerHTML = `
+      <div class="spirit-family-grid">
+        ${spiritFamilies.map(s=>`
+          <div class="spirit-card">
+            <h4>${s.icon} ${s.name}</h4>
+            <div class="spirit-base">${s.base}</div>
+            <div class="spirit-cocktails"><strong>Used in:</strong> ${s.cocktails.map(c=>c.name).join(', ') || 'None on menu'}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if(tab === 'balance'){
+    content.innerHTML = `
+      <div class="card" style="margin-bottom:20px">
+        <h3 style="margin-bottom:12px">The 5 Flavour Elements</h3>
+        <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:16px">Every great cocktail balances these core taste elements:</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm);text-align:center">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#127819;</div>
+            <strong style="color:var(--rose)">SOUR / ACID</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">Citrus juice, vinegar. Adds brightness and cuts sweetness.</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm);text-align:center">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#127855;</div>
+            <strong style="color:var(--gold)">SWEET</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">Sugar syrup, liqueurs, honey. Rounds out flavour and balances acid.</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm);text-align:center">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#9752;</div>
+            <strong style="color:var(--teal)">BITTER</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">Bitters, Campari, tonic. Adds complexity and depth.</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm);text-align:center">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#127862;</div>
+            <strong style="color:var(--purple-light)">SPIRIT / STRONG</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">The base spirit. Provides backbone, warmth, and character.</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm);text-align:center">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#128167;</div>
+            <strong style="color:var(--blue)">DILUTION</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">Water, ice, soda. Opens flavours and makes drinks sessionable.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px">Golden Ratios to Remember</h3>
+        <div style="display:grid;gap:12px">
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <strong>Classic Sour: 2 : 1 : 0.75</strong>
+            <p style="font-size:0.8rem;color:var(--text-dim)">2 parts spirit, 1 part citrus, 0.75 part sweet (e.g. 50ml:25ml:15ml)</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <strong>Negroni / Equal Parts: 1 : 1 : 1</strong>
+            <p style="font-size:0.8rem;color:var(--text-dim)">Equal measures of each component (e.g. 25ml:25ml:25ml)</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <strong>Spritz: 3 : 2 : 1</strong>
+            <p style="font-size:0.8rem;color:var(--text-dim)">3 parts prosecco, 2 parts aperitif, 1 part soda</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <strong>Highball: 1 : 3+</strong>
+            <p style="font-size:0.8rem;color:var(--text-dim)">1 part spirit, 3+ parts mixer (e.g. 50ml spirit, top with mixer)</p>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if(tab === 'garnish'){
+    content.innerHTML = `
+      <div class="card" style="margin-bottom:20px">
+        <h3 style="margin-bottom:12px">Garnish Guide</h3>
+        <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:16px">Garnishes aren't decoration — they add aroma, flavour, and visual appeal.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#127819;</div>
+            <strong>Citrus Twist</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim)">Express oils over drink, rub rim. Used on: Negroni, Cosmopolitan, Old Fashioned</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#127819;</div>
+            <strong>Citrus Wheel / Slice</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim)">Decorative disc on rim. Used on: Gimlet, Daiquiri, Tom Collins</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#127819;</div>
+            <strong>Citrus Wedge</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim)">Squeezable quarter. Used on: Moscow Mule, Paloma, Cuba Libre</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#127808;</div>
+            <strong>Mint Sprig</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim)">Slap between palms to release aroma. Used on: Mojito, Hugo Spritz</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#127826;</div>
+            <strong>Cherry</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim)">Maraschino or Luxardo. Used on: Manhattan, Singapore Sling</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#9749;</div>
+            <strong>Coffee Beans (3x)</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim)">Symbolise health, wealth, happiness. Used on: Espresso Martini, Irish Coffee</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#129474;</div>
+            <strong>Salt / Sugar Rim</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim)">Wet rim with citrus, dip in salt/sugar. Used on: Margarita, Blackberry Margarita</p>
+          </div>
+          <div style="background:var(--bg-surface);padding:16px;border-radius:var(--radius-sm)">
+            <div style="font-size:1.5rem;margin-bottom:6px">&#128167;</div>
+            <strong>Bitters Drops</strong>
+            <p style="font-size:0.75rem;color:var(--text-dim)">Decorative drops on foam. Used on: Whiskey Sour, Clover Club</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ============================================
+// QUIZ ARENA
+// ============================================
+const QUIZ_MODES = [
+  {id:'ingredients',name:'Ingredient Check',desc:'Name the ingredients for each cocktail.',icon:'&#129514;',difficulty:'Medium',questionCount:10,color:'var(--rose)'},
+  {id:'measurements',name:'Measure Up',desc:'Get the exact measurements right.',icon:'&#129520;',difficulty:'Hard',questionCount:10,color:'var(--gold)'},
+  {id:'method',name:'Method Madness',desc:'Match cocktails to their correct method.',icon:'&#127944;',difficulty:'Easy',questionCount:10,color:'var(--teal)'},
+  {id:'glassware',name:'Glass Act',desc:'Which glass does each cocktail go in?',icon:'&#129347;',difficulty:'Easy',questionCount:10,color:'var(--blue)'},
+  {id:'garnish',name:'Garnish Game',desc:'What garnish completes each drink?',icon:'&#127808;',difficulty:'Medium',questionCount:10,color:'var(--green)'},
+  {id:'mixed',name:'Master Mix',desc:'All question types combined. The ultimate test.',icon:'&#127942;',difficulty:'Hard',questionCount:15,color:'var(--purple-light)'},
+  {id:'speed',name:'Speed Round',desc:'30 seconds per question. How many can you get?',icon:'&#9889;',difficulty:'Expert',questionCount:20,color:'var(--amber)'},
+  {id:'funfacts',name:'Bar Trivia',desc:'Fun facts and cocktail history.',icon:'&#128218;',difficulty:'Easy',questionCount:10,color:'var(--rose)'},
+];
+
+let quizState = null;
+let quizTimer = null;
+
+function showQuizMenu(){
+  document.getElementById('quizMenu').style.display = 'block';
+  document.getElementById('quizActive').style.display = 'none';
+  document.getElementById('quizResults').style.display = 'none';
+
+  document.getElementById('quizModes').innerHTML = QUIZ_MODES.map(m=>`
+    <div class="quiz-mode-card" onclick="startQuiz('${m.id}')">
+      <div class="mode-icon">${m.icon}</div>
+      <h3>${m.name}</h3>
+      <p>${m.desc}</p>
+      <span class="mode-difficulty" style="color:${m.color}">${m.difficulty}</span>
+      ${state.quizHighScores[m.id]?`<p style="font-size:0.7rem;color:var(--gold);margin-top:8px">Best: ${state.quizHighScores[m.id]}%</p>`:''}
+    </div>
+  `).join('');
+}
+
+function startQuiz(modeId){
+  const mode = QUIZ_MODES.find(m=>m.id===modeId);
+  const questions = generateQuestions(modeId, mode.questionCount);
+
+  quizState = {
+    mode: modeId,
+    questions,
+    current: 0,
+    correct: 0,
+    answered: 0,
+    startTime: Date.now(),
+    answers: [],
+    timePerQuestion: modeId === 'speed' ? 30 : 0,
+    timeLeft: modeId === 'speed' ? 30 : 0,
+  };
+
+  document.getElementById('quizMenu').style.display = 'none';
+  document.getElementById('quizActive').style.display = 'block';
+  document.getElementById('quizResults').style.display = 'none';
+
+  renderQuizQuestion();
+}
+
+function startRandomQuiz(){
+  navigateTo('quiz');
+  setTimeout(()=>startQuiz('mixed'),100);
+}
+
+function generateQuestions(mode, count){
+  let questions = [];
+  const pool = shuffleArray([...COCKTAILS]);
+
+  for(let i=0; i<Math.min(count, pool.length); i++){
+    const c = pool[i];
+    let q = null;
+
+    if(mode === 'ingredients' || (mode === 'mixed' && Math.random()<0.25)){
+      const correct = c.ingredients[0].item;
+      const wrongs = shuffleArray(COCKTAILS.filter(x=>x.id!==c.id).flatMap(x=>x.ingredients.map(i=>i.item)).filter(x=>x!==correct)).slice(0,3);
+      q = {type:'ingredients',question:`Which is an ingredient in a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+    } else if(mode === 'measurements' || (mode === 'mixed' && Math.random()<0.5)){
+      const ing = c.ingredients.find(i=>i.qty && i.qty.includes('ml'));
+      if(ing){
+        const correct = ing.qty;
+        const num = parseInt(correct);
+        const wrongs = [...new Set([num-15,num-10,num+10,num+15,num+25].filter(n=>n>0&&n!==num))].slice(0,3).map(n=>n+' ml');
+        q = {type:'measurements',question:`How much ${ing.item} goes in a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+      }
+    } else if(mode === 'method' || (mode === 'mixed' && Math.random()<0.65)){
+      const methods = [...new Set(COCKTAILS.map(c=>c.method))];
+      const correct = c.method;
+      const wrongs = shuffleArray(methods.filter(m=>m!==correct)).slice(0,3);
+      q = {type:'method',question:`What method is used for a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+    } else if(mode === 'glassware' || (mode === 'mixed' && Math.random()<0.8)){
+      const glasses = [...new Set(COCKTAILS.map(c=>c.glass))];
+      const correct = c.glass;
+      const wrongs = shuffleArray(glasses.filter(g=>g!==correct)).slice(0,3);
+      q = {type:'glassware',question:`What glass is a ${c.name} served in?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+    } else if(mode === 'garnish'){
+      const garnishes = [...new Set(COCKTAILS.map(c=>c.garnish))];
+      const correct = c.garnish;
+      const wrongs = shuffleArray(garnishes.filter(g=>g!==correct)).slice(0,3);
+      q = {type:'garnish',question:`What garnish goes on a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+    } else if(mode === 'funfacts'){
+      if(c.funFact){
+        const others = shuffleArray(COCKTAILS.filter(x=>x.id!==c.id)).slice(0,3);
+        q = {type:'funfacts',question:`"${c.funFact}"`,context:'Which cocktail is this about?',options:shuffleArray([c.name,...others.map(o=>o.name)]),correct:c.name,cocktailId:c.id};
+      }
+    } else if(mode === 'speed'){
+      // Random type for speed
+      const types = ['ingredients','method','glassware','garnish'];
+      const t = types[Math.floor(Math.random()*types.length)];
+      return generateQuestions(t, 1);
+    }
+
+    if(!q){
+      // Fallback to method question
+      const methods = [...new Set(COCKTAILS.map(c=>c.method))];
+      const correct = c.method;
+      const wrongs = shuffleArray(methods.filter(m=>m!==correct)).slice(0,3);
+      q = {type:'method',question:`What method is used for a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+    }
+
+    if(q.options.length < 4){
+      while(q.options.length < 4) q.options.push('-');
+    }
+    questions.push(q);
+  }
+
+  if(mode === 'speed'){
+    questions = [];
+    const types = ['ingredients','method','glassware','garnish'];
+    for(let i=0;i<count;i++){
+      const t = types[i%types.length];
+      const qs = generateQuestions(t, 1);
+      if(qs.length) questions.push(qs[0]);
+    }
+  }
+
+  return questions;
+}
+
+function renderQuizQuestion(){
+  if(!quizState || quizState.current >= quizState.questions.length){
+    finishQuiz();
+    return;
+  }
+
+  const q = quizState.questions[quizState.current];
+  const letters = ['A','B','C','D'];
+
+  let timerHTML = '';
+  if(quizState.mode === 'speed'){
+    quizState.timeLeft = quizState.timePerQuestion;
+    clearInterval(quizTimer);
+    quizTimer = setInterval(()=>{
+      quizState.timeLeft--;
+      const timerEl = document.getElementById('quizTimerDisplay');
+      if(timerEl) timerEl.textContent = quizState.timeLeft + 's';
+      if(quizState.timeLeft <= 0){
+        clearInterval(quizTimer);
+        answerQuiz(-1);
+      }
+    },1000);
+    timerHTML = `<div class="quiz-timer" id="quizTimerDisplay">${quizState.timePerQuestion}s</div>`;
+  }
+
+  document.getElementById('quizActive').innerHTML = `
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <button class="btn btn-ghost" onclick="showQuizMenu()">&#8592; Quit</button>
+        ${timerHTML}
+        <div class="quiz-score">Score: ${quizState.correct}/${quizState.answered}</div>
+      </div>
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" style="width:${(quizState.current/quizState.questions.length)*100}%"></div>
+      </div>
+      <div class="quiz-question">
+        <div class="q-number">Question ${quizState.current+1} of ${quizState.questions.length}</div>
+        <div class="q-text">${q.question}</div>
+        ${q.context?`<div class="q-context">${q.context}`:''}
+      </div>
+      <div class="quiz-options">
+        ${q.options.map((opt,i)=>`
+          <button class="quiz-option" onclick="answerQuiz(${i})" id="qopt${i}">
+            <span class="option-letter">${letters[i]}</span>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function answerQuiz(idx){
+  clearInterval(quizTimer);
+  const q = quizState.questions[quizState.current];
+  const selected = idx >= 0 ? q.options[idx] : null;
+  const isCorrect = selected === q.correct;
+
+  // Highlight answers
+  q.options.forEach((opt,i)=>{
+    const el = document.getElementById('qopt'+i);
+    if(!el) return;
+    el.classList.add('disabled');
+    el.onclick = null;
+    if(opt === q.correct) el.classList.add('correct');
+    else if(i === idx) el.classList.add('wrong');
+  });
+
+  quizState.answered++;
+  if(isCorrect) quizState.correct++;
+  quizState.answers.push({question:q.question, selected, correct:q.correct, isCorrect, cocktailId:q.cocktailId});
+
+  trackCocktail(q.cocktailId, isCorrect);
+  state.totalAnswered++;
+  if(isCorrect) state.totalCorrect++;
+  saveState();
+
+  setTimeout(()=>{
+    quizState.current++;
+    renderQuizQuestion();
+  }, 1000);
+}
+
+function finishQuiz(){
+  clearInterval(quizTimer);
+  const pct = Math.round((quizState.correct / quizState.questions.length) * 100);
+  const timeTaken = Math.round((Date.now() - quizState.startTime) / 1000);
+
+  state.totalQuizzes++;
+  if(!state.quizHighScores[quizState.mode] || pct > state.quizHighScores[quizState.mode]){
+    state.quizHighScores[quizState.mode] = pct;
+  }
+
+  const xpEarned = quizState.correct * 10 + (pct === 100 ? 50 : 0);
+  addXP(xpEarned);
+
+  if(pct >= 80) fireConfetti();
+
+  document.getElementById('quizActive').style.display = 'none';
+  document.getElementById('quizResults').style.display = 'block';
+
+  document.getElementById('quizResults').innerHTML = `
+    <div class="quiz-results">
+      <div class="results-score">${pct}%</div>
+      <div class="results-label">${pct===100?'PERFECT!':pct>=80?'Excellent!':pct>=60?'Good work!':pct>=40?'Keep practicing!':'Study up!'}</div>
+      <div class="results-stats">
+        <div class="results-stat"><div class="rs-value" style="color:var(--green)">${quizState.correct}</div><div class="rs-label">Correct</div></div>
+        <div class="results-stat"><div class="rs-value" style="color:var(--rose)">${quizState.questions.length - quizState.correct}</div><div class="rs-label">Wrong</div></div>
+        <div class="results-stat"><div class="rs-value">${timeTaken}s</div><div class="rs-label">Time</div></div>
+        <div class="results-stat"><div class="rs-value" style="color:var(--gold)">+${xpEarned}</div><div class="rs-label">XP Earned</div></div>
+      </div>
+      <div class="results-breakdown">
+        <h4>Question Breakdown</h4>
+        ${quizState.answers.map(a=>`
+          <div class="rb-item ${a.isCorrect?'rb-correct':'rb-wrong'}">
+            <span class="rb-icon">${a.isCorrect?'&#9989;':'&#10060;'}</span>
+            <span style="flex:1;font-size:0.8rem">${a.question.substring(0,60)}${a.question.length>60?'...':''}</span>
+            ${!a.isCorrect?`<span style="font-size:0.72rem;color:var(--green)">${a.correct}</span>`:''}
+          </div>
+        `).join('')}
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-primary" onclick="startQuiz('${quizState.mode}')">Try Again</button>
+        <button class="btn btn-secondary" onclick="showQuizMenu()">Back to Menu</button>
+      </div>
+    </div>
+  `;
+  updateUI();
+}
+
+// ============================================
+// SIMULATION MODE
+// ============================================
+const SCENARIOS = [
+  {
+    id:'rush',name:'Rush Hour',icon:'&#9200;',difficulty:3,
+    desc:'It\'s Friday night. Orders are flying in. Make the right cocktails fast.',
+    scenes:[
+      {
+        text:'A customer orders an Espresso Martini. Build it correctly.',
+        constraint:null,
+        targetCocktail:'espresso-martini',
+        type:'build'
+      },
+      {
+        text:'Next order: Negroni. The customer says "make it the classic way".',
+        constraint:null,
+        targetCocktail:'negroni',
+        type:'build'
+      },
+      {
+        text:'Two Margaritas, one classic, one Tommy\'s. What\'s the difference?',
+        constraint:null,
+        targetCocktail:'tommys-margarita',
+        type:'build',
+        bonusQuestion:'What makes Tommy\'s Margarita different from a classic Margarita?',
+        bonusAnswer:'agave'
+      }
+    ]
+  },
+  {
+    id:'substitution',name:'86\'d!',icon:'&#128683;',difficulty:4,
+    desc:'Key ingredients have run out. Adapt and substitute without compromising quality.',
+    scenes:[
+      {
+        text:'A customer wants a Whiskey Sour, but you\'re completely out of sugar syrup.',
+        constraint:'Sugar Syrup is unavailable!',
+        hint:'Think about other sweeteners on the bar...',
+        targetCocktail:'whiskey-sour',
+        type:'adapt',
+        unavailable:['Sugar Syrup'],
+        acceptableSubs:['Honey','Agave Syrup','Maple Syrup','Cane Syrup']
+      },
+      {
+        text:'Someone orders a Mojito but the fresh limes are all gone.',
+        constraint:'Fresh Limes are unavailable!',
+        hint:'What other citrus could work?',
+        targetCocktail:'mojito',
+        type:'adapt',
+        unavailable:['Lime Juice','Lime Wedges','Lime Juice (fresh)'],
+        acceptableSubs:['Lemon Juice','Lemon Juice (fresh)']
+      },
+      {
+        text:'A guest wants a Dark & Stormy but you have no Ginger Ale.',
+        constraint:'Ginger Ale is unavailable!',
+        hint:'What else has that ginger kick?',
+        targetCocktail:'dark-stormy',
+        type:'adapt',
+        unavailable:['Ginger Ale'],
+        acceptableSubs:['Ginger Beer','London Essence Ginger Beer']
+      }
+    ]
+  },
+  {
+    id:'customer',name:'Difficult Customers',icon:'&#128100;',difficulty:3,
+    desc:'Handle special requests, allergies, and picky customers like a pro.',
+    scenes:[
+      {
+        text:'"I want something sweet, fruity, with rum... but I\'m allergic to nuts." What do you recommend?',
+        constraint:'Must be NUT-FREE!',
+        type:'recommend',
+        requirements:{spirit:'rum',profile:'sweet',allergenFree:['Nuts']},
+        validAnswers:['daiquiri','pina-colada','mojito','cuba-libre','zombie','raspberry-rose-mojito']
+      },
+      {
+        text:'"Give me something strong, spirit-forward, and classic. No citrus."',
+        constraint:'No citrus ingredients!',
+        type:'recommend',
+        requirements:{profile:'strong',noCitrus:true},
+        validAnswers:['negroni','old-fashioned','manhattan','godfather','black-russian','sazerac']
+      },
+      {
+        text:'"I don\'t drink alcohol but I still want something sophisticated." What do you suggest?',
+        constraint:'Must be non-alcoholic!',
+        type:'recommend',
+        requirements:{noAlc:true},
+        validAnswers:['floradora','celtic-garden']
+      }
+    ]
+  },
+  {
+    id:'method',name:'Method Master',icon:'&#129514;',difficulty:2,
+    desc:'Given a cocktail, demonstrate you know the exact method and sequence.',
+    scenes:[
+      {
+        text:'Walk through making an Old Fashioned. What\'s the method?',
+        type:'method-order',
+        targetCocktail:'old-fashioned',
+        correctSteps:['Add sugar cube to glass','Add bitters','Muddle gently','Add whiskey','Add ice','Stir','Garnish with orange twist']
+      },
+      {
+        text:'How do you properly make a Mojito? Order matters!',
+        type:'method-order',
+        targetCocktail:'mojito',
+        correctSteps:['Add lime wedges','Add sugar syrup','Muddle','Add rum','Add mint leaves','Add crushed ice','Churn','Top with soda','Garnish with mint sprig']
+      }
+    ]
+  },
+];
+
+let simState = null;
+
+function showSimMenu(){
+  document.getElementById('simMenu').style.display = 'block';
+  document.getElementById('simActive').style.display = 'none';
+
+  document.getElementById('simScenarios').innerHTML = SCENARIOS.map(s=>`
+    <div class="sim-scenario-card" onclick="startSimulation('${s.id}')">
+      <div class="sim-icon">${s.icon}</div>
+      <h3>${s.name}</h3>
+      <p>${s.desc}</p>
+      <div class="sim-difficulty">
+        ${Array(5).fill(0).map((_,i)=>`<span class="sim-star ${i<s.difficulty?'':'empty'}">${i<s.difficulty?'&#9733;':'&#9734;'}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function startSimulation(scenarioId){
+  const scenario = SCENARIOS.find(s=>s.id===scenarioId);
+  if(!scenario){showSimMenu();return;}
+
+  navigateTo('simulation');
+  simState = {scenario, sceneIndex:0, score:0, totalScenes:scenario.scenes.length};
+
+  document.getElementById('simMenu').style.display = 'none';
+  document.getElementById('simActive').style.display = 'block';
+
+  renderSimScene();
+}
+
+function renderSimScene(){
+  if(!simState || simState.sceneIndex >= simState.totalScenes){
+    finishSimulation();
+    return;
+  }
+
+  const scene = simState.scenario.scenes[simState.sceneIndex];
+  const target = scene.targetCocktail ? COCKTAILS.find(c=>c.id===scene.targetCocktail) : null;
+
+  let workspaceHTML = '';
+
+  if(scene.type === 'build' || scene.type === 'adapt'){
+    // Get all possible ingredients for the shelf
+    const allIngredients = [...new Set(COCKTAILS.flatMap(c=>c.ingredients.map(i=>i.item)))].sort();
+    const unavailable = scene.unavailable || [];
+
+    workspaceHTML = `
+      <div class="sim-workspace">
+        <h4>&#127860; Your Bar</h4>
+        <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:12px">Click ingredients to add them to your glass. Build the cocktail!</p>
+        <div class="sim-ingredient-shelf" id="simShelf">
+          ${allIngredients.slice(0,40).map(ing=>{
+            const isUnavailable = unavailable.some(u=>ing.toLowerCase().includes(u.toLowerCase()));
+            return `<div class="sim-ingredient ${isUnavailable?'unavailable':''}" onclick="${isUnavailable?'':'addToGlass(this)'}" data-ingredient="${ing}">${ing}</div>`;
+          }).join('')}
+        </div>
+        <h4 style="margin-bottom:8px">&#129347; Your Glass</h4>
+        <div class="sim-glass" id="simGlass"></div>
+        <div class="sim-controls">
+          <button class="btn btn-primary" onclick="submitSimBuild()">Serve Drink</button>
+          <button class="btn btn-secondary" onclick="clearGlass()">Clear Glass</button>
+          ${scene.hint?`<button class="btn btn-ghost" onclick="this.textContent='Hint: ${scene.hint}'">Show Hint</button>`:''}
+        </div>
+      </div>
+    `;
+  } else if(scene.type === 'recommend'){
+    const allCocktails = COCKTAILS.map(c=>({id:c.id,name:c.name}));
+    workspaceHTML = `
+      <div class="sim-workspace">
+        <h4>&#128161; Your Recommendation</h4>
+        <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:12px">Select the cocktail you'd recommend:</p>
+        <div class="sim-ingredient-shelf" id="simRecommendations">
+          ${shuffleArray(allCocktails).map(c=>
+            `<div class="sim-ingredient" onclick="selectRecommendation(this,'${c.id}')" data-id="${c.id}">${c.name}</div>`
+          ).join('')}
+        </div>
+        <div class="sim-controls" style="margin-top:16px">
+          <button class="btn btn-primary" onclick="submitSimRecommend()">Confirm Recommendation</button>
+        </div>
+      </div>
+    `;
+  } else if(scene.type === 'method-order'){
+    const steps = shuffleArray([...scene.correctSteps]);
+    workspaceHTML = `
+      <div class="sim-workspace">
+        <h4>&#128203; Arrange the Steps</h4>
+        <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:12px">Click steps in the correct order:</p>
+        <div class="sim-ingredient-shelf" id="simStepPool">
+          ${steps.map((s,i)=>`<div class="sim-ingredient" onclick="addStep(this)" data-step="${s}">${s}</div>`).join('')}
+        </div>
+        <h4 style="margin-top:16px;margin-bottom:8px">Your Order:</h4>
+        <div class="sim-glass" id="simStepOrder" style="min-height:80px"></div>
+        <div class="sim-controls">
+          <button class="btn btn-primary" onclick="submitSimSteps()">Submit Order</button>
+          <button class="btn btn-secondary" onclick="clearSteps()">Reset</button>
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById('simActive').innerHTML = `
+    <div class="sim-active">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <button class="btn btn-ghost" onclick="showSimMenu()">&#8592; Exit</button>
+        <span style="font-size:0.85rem;color:var(--text-dim)">Scene ${simState.sceneIndex+1} of ${simState.totalScenes}</span>
+        <span style="font-size:0.85rem;color:var(--gold)">Score: ${simState.score}</span>
+      </div>
+      <div class="sim-scene">
+        <div class="scene-label">${simState.scenario.name}</div>
+        <div class="scene-text">${scene.text}</div>
+        ${scene.constraint?`<div class="scene-constraint">&#9888; ${scene.constraint}</div>`:''}
+      </div>
+      ${workspaceHTML}
+      <div id="simFeedback"></div>
+    </div>
+  `;
+}
+
+// Glass interaction
+let glassContents = [];
+let selectedRecommendation = null;
+let orderedSteps = [];
+
+function addToGlass(el){
+  const ing = el.dataset.ingredient;
+  if(glassContents.includes(ing)) return;
+  glassContents.push(ing);
+  el.classList.add('selected');
+  renderGlass();
+}
+
+function renderGlass(){
+  const glass = document.getElementById('simGlass');
+  if(!glass) return;
+  glass.innerHTML = glassContents.map(ing=>
+    `<div class="sim-added"><span>${ing}</span><span class="remove-ing" onclick="removeFromGlass('${ing.replace(/'/g,"\\'")}')">&#10005;</span></div>`
+  ).join('');
+}
+
+function removeFromGlass(ing){
+  glassContents = glassContents.filter(i=>i!==ing);
+  const shelf = document.getElementById('simShelf');
+  if(shelf){
+    shelf.querySelectorAll('.sim-ingredient').forEach(el=>{
+      if(el.dataset.ingredient===ing) el.classList.remove('selected');
+    });
+  }
+  renderGlass();
+}
+
+function clearGlass(){
+  glassContents = [];
+  document.querySelectorAll('#simShelf .sim-ingredient').forEach(el=>el.classList.remove('selected'));
+  renderGlass();
+}
+
+function submitSimBuild(){
+  const scene = simState.scenario.scenes[simState.sceneIndex];
+  const target = COCKTAILS.find(c=>c.id===scene.targetCocktail);
+  if(!target) return;
+
+  const targetIngs = target.ingredients.map(i=>i.item.toLowerCase());
+  const selected = glassContents.map(i=>i.toLowerCase());
+
+  let correctCount = 0;
+  let extraCount = 0;
+
+  targetIngs.forEach(t=>{
+    if(selected.some(s=>s.includes(t)||t.includes(s))) correctCount++;
+  });
+  selected.forEach(s=>{
+    if(!targetIngs.some(t=>s.includes(t)||t.includes(s))) extraCount++;
+  });
+
+  // For adapt scenarios, check for acceptable substitutions
+  if(scene.type === 'adapt' && scene.acceptableSubs){
+    scene.acceptableSubs.forEach(sub=>{
+      if(selected.some(s=>s.toLowerCase().includes(sub.toLowerCase()))) correctCount++;
+    });
+  }
+
+  const accuracy = Math.max(0, (correctCount / targetIngs.length) - (extraCount * 0.15));
+  const score = Math.round(accuracy * 100);
+
+  let feedbackClass, feedbackTitle;
+  if(score >= 80){feedbackClass='success';feedbackTitle='Excellent!';}
+  else if(score >= 50){feedbackClass='partial';feedbackTitle='Close!';}
+  else{feedbackClass='fail';feedbackTitle='Not quite!';}
+
+  const xp = Math.round(score / 10);
+  simState.score += xp;
+  addXP(xp);
+
+  document.getElementById('simFeedback').innerHTML = `
+    <div class="sim-feedback ${feedbackClass}">
+      <h4>${feedbackTitle} (${score}%)</h4>
+      <p><strong>Correct recipe:</strong> ${target.ingredients.map(i=>`${i.qty} ${i.item}`).join(', ')}</p>
+      <p><strong>Method:</strong> ${target.method} | <strong>Glass:</strong> ${target.glass} | <strong>Garnish:</strong> ${target.garnish}</p>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="nextSimScene()">Next Scenario &#8594;</button>
+    </div>
+  `;
+  glassContents = [];
+}
+
+function selectRecommendation(el, id){
+  document.querySelectorAll('#simRecommendations .sim-ingredient').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRecommendation = id;
+}
+
+function submitSimRecommend(){
+  if(!selectedRecommendation){showToast('Select a cocktail first!','error');return;}
+  const scene = simState.scenario.scenes[simState.sceneIndex];
+  const isValid = scene.validAnswers.includes(selectedRecommendation);
+
+  const selected = COCKTAILS.find(c=>c.id===selectedRecommendation);
+  const validNames = scene.validAnswers.map(id=>COCKTAILS.find(c=>c.id===id)?.name).filter(Boolean);
+
+  const xp = isValid ? 15 : 0;
+  simState.score += xp;
+  if(xp) addXP(xp);
+
+  document.getElementById('simFeedback').innerHTML = `
+    <div class="sim-feedback ${isValid?'success':'fail'}">
+      <h4>${isValid?'Great recommendation!':'Not the best choice.'}</h4>
+      <p>You suggested: <strong>${selected?.name||'Unknown'}</strong></p>
+      <p>Valid options were: <strong>${validNames.join(', ')}</strong></p>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="nextSimScene()">Next Scenario &#8594;</button>
+    </div>
+  `;
+  selectedRecommendation = null;
+}
+
+function addStep(el){
+  const step = el.dataset.step;
+  orderedSteps.push(step);
+  el.style.display = 'none';
+  const order = document.getElementById('simStepOrder');
+  if(order){
+    order.innerHTML = orderedSteps.map((s,i)=>
+      `<div class="sim-added"><span>${i+1}. ${s}</span></div>`
+    ).join('');
+  }
+}
+
+function clearSteps(){
+  orderedSteps = [];
+  document.querySelectorAll('#simStepPool .sim-ingredient').forEach(el=>el.style.display='');
+  const order = document.getElementById('simStepOrder');
+  if(order) order.innerHTML = '';
+}
+
+function submitSimSteps(){
+  const scene = simState.scenario.scenes[simState.sceneIndex];
+  let correctCount = 0;
+  const total = scene.correctSteps.length;
+
+  orderedSteps.forEach((step, i)=>{
+    if(scene.correctSteps[i] === step) correctCount++;
+  });
+
+  const score = Math.round((correctCount / total) * 100);
+  const xp = Math.round(score / 10);
+  simState.score += xp;
+  if(xp) addXP(xp);
+
+  let feedbackClass = score >= 80 ? 'success' : score >= 50 ? 'partial' : 'fail';
+
+  document.getElementById('simFeedback').innerHTML = `
+    <div class="sim-feedback ${feedbackClass}">
+      <h4>${score >= 80?'Well done!':score>=50?'Almost!':'Review the method!'} (${score}%)</h4>
+      <p><strong>Correct order:</strong></p>
+      <ol style="padding-left:20px;font-size:0.82rem;color:var(--text-dim)">
+        ${scene.correctSteps.map(s=>`<li>${s}</li>`).join('')}
+      </ol>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="nextSimScene()">Next Scenario &#8594;</button>
+    </div>
+  `;
+  orderedSteps = [];
+}
+
+function nextSimScene(){
+  simState.sceneIndex++;
+  glassContents = [];
+  selectedRecommendation = null;
+  orderedSteps = [];
+  renderSimScene();
+}
+
+function finishSimulation(){
+  const xpBonus = simState.score;
+  addXP(xpBonus);
+
+  document.getElementById('simActive').innerHTML = `
+    <div class="quiz-results">
+      <div class="results-score">${simState.score}</div>
+      <div class="results-label">Simulation Complete!</div>
+      <p style="color:var(--text-dim);margin-bottom:24px">${simState.scenario.name} finished. Total XP earned: +${simState.score}</p>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-primary" onclick="startSimulation('${simState.scenario.id}')">Retry</button>
+        <button class="btn btn-secondary" onclick="showSimMenu()">Back to Scenarios</button>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================
+// ACHIEVEMENTS
+// ============================================
+function checkAchievements(){
+  ACHIEVEMENTS_DEF.forEach(a=>{
+    if(!state.achievements.includes(a.id) && a.condition(state)){
+      state.achievements.push(a.id);
+      showToast(`Achievement unlocked: ${a.name}!`,'achievement');
+      saveState();
+    }
+  });
+}
+
+function renderAchievements(){
+  document.getElementById('achievementsGrid').innerHTML = ACHIEVEMENTS_DEF.map(a=>{
+    const unlocked = state.achievements.includes(a.id);
+    return `
+      <div class="achievement-card ${unlocked?'unlocked':'locked'}">
+        <div class="achievement-icon">${a.icon}</div>
+        <h4>${a.name}</h4>
+        <p>${a.desc}</p>
+        ${unlocked?'<p style="color:var(--gold);font-size:0.7rem;margin-top:6px">UNLOCKED</p>':'<p style="color:var(--text-muted);font-size:0.7rem;margin-top:6px">LOCKED</p>'}
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================
+// UTILITIES
+// ============================================
+function shuffleArray(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// ============================================
+// INIT
+// ============================================
+checkStreak();
+updateUI();
+renderRecipes();
+</script>
+
+<footer class="app-footer">
+  <p>Made with ❤️ by Manan</p>
+  <a href="https://github.com/mr-ice-web/" target="_blank" rel="noopener noreferrer" class="github-link" aria-label="Manan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 .5C5.7.5.5 5.7.5 12.1c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2.1c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 .1 1.6.8 1.6.8 1 .1 1.7.1 2.1.1.1-.7.4-1.4.8-1.7-2.5-.3-5.1-1.3-5.1-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.2 1.2.9-.2 1.8-.3 2.7-.3s1.8.1 2.7.3c2.2-1.5 3.2-1.2 3.2-1.2.6 1.7.2 2.9.1 3.2.8.9 1.2 1.9 1.2 3.2 0 4.5-2.6 5.5-5.1 5.8.5.4.8 1.1.8 2.3v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/>
+    </svg>
+  </a>
+</footer>
+</body>
+</html>
