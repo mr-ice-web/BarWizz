@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bar Wizz - Master the Art of Mixology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================
    CSS RESET & VARIABLES
@@ -40,12 +43,24 @@
 }
 html{font-size:16px;scroll-behavior:smooth}
 body{
-  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
   background:var(--bg-dark);
+  background-image:
+    radial-gradient(900px 500px at 12% -8%, rgba(108,63,197,0.16), transparent 60%),
+    radial-gradient(800px 500px at 100% 0%, rgba(212,165,67,0.10), transparent 55%),
+    radial-gradient(700px 600px at 50% 120%, rgba(45,212,191,0.06), transparent 60%);
+  background-attachment:fixed;
   color:var(--text);
   min-height:100vh;
   overflow-x:hidden;
   line-height:1.6;
+}
+/* Elegant display font for headings & cocktail names */
+.sidebar-header h1,.section-title,.hero-greeting,.recipe-detail h2,
+.recipe-card-header h3,.fc-cocktail-name,.build-prompt h2,.flashcard-back h3,
+.results-score,.formula-name,.tl-name{
+  font-family:'Playfair Display',Georgia,serif;
+  letter-spacing:0.3px;
 }
 button{cursor:pointer;font-family:inherit;border:none;outline:none;background:none;color:inherit}
 input,select{font-family:inherit;outline:none}
@@ -252,6 +267,13 @@ a{color:inherit;text-decoration:none}
 
 .glass-icon{font-size:1.4rem}
 
+/* SVG glassware silhouettes */
+.glass-svg{width:26px;height:33px;display:block;color:var(--gold)}
+.glass-svg-lg{width:48px;height:60px;display:block;margin:0 auto;color:var(--gold-light)}
+.recipe-card-title{display:flex;align-items:flex-start;gap:12px}
+.recipe-card-glass .glass-svg{width:30px;height:38px;color:var(--gold-dim)}
+.recipe-card:hover .recipe-card-glass .glass-svg{color:var(--gold)}
+
 /* Toast */
 .toast-container{
   position:fixed;top:20px;right:20px;z-index:9999;
@@ -356,6 +378,39 @@ a{color:inherit;text-decoration:none}
   transition:var(--transition);
 }
 .dash-card:hover .card-arrow{color:var(--gold);transform:translateX(4px)}
+
+/* Daily Challenge banner */
+.daily-banner{
+  background:linear-gradient(110deg,rgba(212,165,67,0.18),rgba(108,63,197,0.16));
+  border:1px solid rgba(212,165,67,0.35);
+  border-radius:var(--radius);
+  padding:18px 24px;
+  margin-bottom:28px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  cursor:pointer;
+  transition:var(--transition);
+  position:relative;overflow:hidden;
+}
+.daily-banner::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(110deg,transparent,rgba(255,255,255,0.06),transparent);
+  background-size:200% 100%;
+  animation:shimmer 4s infinite;
+  pointer-events:none;
+}
+.daily-banner:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,0,0,0.3)}
+.daily-banner.done{background:rgba(34,197,94,0.08);border-color:var(--green-dim);cursor:default}
+.daily-banner.done:hover{transform:none;box-shadow:none}
+.daily-left{display:flex;align-items:center;gap:16px}
+.daily-icon{font-size:2rem}
+.daily-title{font-size:1.05rem;font-weight:700}
+.daily-sub{font-size:0.8rem;color:var(--text-dim);margin-top:2px}
+.daily-cta{
+  background:var(--gold);color:#0a0a12;
+  font-weight:700;font-size:0.85rem;
+  padding:10px 20px;border-radius:var(--radius-sm);
+  white-space:nowrap;
+}
 
 /* Quick Actions */
 .quick-actions{
@@ -467,6 +522,8 @@ a{color:inherit;text-decoration:none}
   display:flex;align-items:center;justify-content:center;
   font-size:2rem;
 }
+.recipe-detail-glass .glass-svg{width:38px;height:46px;color:var(--gold-light)}
+.build-glass .glass-svg{width:42px;height:52px;color:var(--gold-light)}
 .recipe-detail h2{font-size:1.4rem;margin-bottom:2px}
 .recipe-detail .recipe-meta{font-size:0.78rem;color:var(--text-dim)}
 .recipe-detail .recipe-fun-fact{
@@ -498,7 +555,38 @@ a{color:inherit;text-decoration:none}
 .method-steps{margin-bottom:20px}
 .method-steps h4{font-size:0.85rem;margin-bottom:10px;color:var(--gold)}
 .method-steps ol{padding-left:20px}
-.method-steps li{font-size:0.82rem;margin-bottom:6px;color:var(--text-dim)}
+.method-steps li{font-size:0.82rem;margin-bottom:8px;color:var(--text-dim);line-height:1.5}
+.method-steps li::marker{color:var(--gold);font-weight:700}
+
+/* Recipe stat row + tasting notes + origins */
+.recipe-stat-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.recipe-stat{
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:8px 14px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.recipe-stat .rstat-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)}
+.recipe-stat .rstat-val{font-size:0.85rem;font-weight:700;color:var(--text)}
+.flavor-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.flavor-tag{
+  background:linear-gradient(135deg,rgba(108,63,197,0.18),rgba(212,165,67,0.12));
+  border:1px solid rgba(155,109,255,0.25);
+  color:var(--text);
+  padding:4px 12px;border-radius:20px;
+  font-size:0.72rem;font-weight:600;
+}
+.recipe-origin{
+  background:rgba(108,63,197,0.07);
+  border:1px solid rgba(155,109,255,0.2);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;margin-top:4px;
+}
+.recipe-origin h4{font-size:0.85rem;color:var(--purple-light);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.recipe-origin .origin-meta{font-size:0.7rem;color:var(--text-dim);font-weight:500;letter-spacing:0.5px}
+.recipe-origin .origin-creator{font-size:0.74rem;color:var(--gold);margin-bottom:6px}
+.recipe-origin p{font-size:0.82rem;color:var(--text-dim);line-height:1.6}
 
 /* ============================================
    FLASHCARDS
@@ -687,6 +775,37 @@ a{color:inherit;text-decoration:none}
   transition:var(--transition);
 }
 .formula-cocktail-tag:hover{color:var(--gold);background:rgba(212,165,67,0.1)}
+
+/* Formula scaler (interactive) */
+.formula-scaler{
+  background:var(--bg-dark);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;margin-bottom:16px;
+}
+.scaler-head{display:flex;justify-content:space-between;align-items:center;font-size:0.75rem;color:var(--text-dim);margin-bottom:8px}
+.scaler-vol b{color:var(--gold);font-size:0.95rem}
+.scaler-range{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:6px;border-radius:3px;
+  background:var(--bg-surface);
+  outline:none;margin:6px 0 12px;cursor:pointer;
+}
+.scaler-range::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:18px;height:18px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  cursor:pointer;box-shadow:0 0 8px rgba(212,165,67,0.5);
+}
+.scaler-range::-moz-range-thumb{
+  width:18px;height:18px;border:none;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--amber));cursor:pointer;
+}
+.scaler-breakdown{display:flex;flex-direction:column;gap:6px}
+.sb-item{display:flex;align-items:center;gap:8px;font-size:0.8rem}
+.sb-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.sb-label{color:var(--text-dim);flex:1}
+.sb-ml{color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums}
 
 /* Ratio Visual */
 .ratio-bar{
@@ -943,6 +1062,117 @@ a{color:inherit;text-decoration:none}
 .rb-item .rb-icon{font-size:0.9rem}
 
 /* ============================================
+   HISTORY TIMELINE
+   ============================================ */
+.timeline{position:relative;padding-left:8px}
+.timeline-era{
+  font-size:0.8rem;font-weight:700;
+  color:var(--gold);
+  text-transform:uppercase;letter-spacing:1px;
+  margin:24px 0 12px;padding-left:4px;
+}
+.timeline-era:first-child{margin-top:0}
+.timeline-item{
+  display:grid;
+  grid-template-columns:80px 24px 1fr;
+  align-items:center;
+  cursor:pointer;
+  border-radius:var(--radius-sm);
+  transition:var(--transition);
+  padding:6px 8px;
+}
+.timeline-item:hover{background:rgba(255,255,255,0.03)}
+.timeline-item:hover .tl-name{color:var(--gold)}
+.tl-year{font-size:0.8rem;font-weight:700;color:var(--text-dim);text-align:right;padding-right:12px;font-variant-numeric:tabular-nums}
+.tl-dot{
+  width:12px;height:12px;border-radius:50%;
+  background:var(--purple);
+  border:2px solid var(--bg-dark);
+  box-shadow:0 0 0 1px var(--purple-light);
+  justify-self:center;position:relative;
+}
+.tl-dot::before{
+  content:'';position:absolute;left:50%;top:14px;
+  width:2px;height:46px;
+  background:var(--border);transform:translateX(-50%);
+}
+.timeline-item:last-child .tl-dot::before{display:none}
+.tl-body{padding:8px 0 8px 8px}
+.tl-name{font-size:0.95rem;font-weight:600;transition:var(--transition)}
+.tl-meta{font-size:0.75rem;color:var(--text-muted)}
+
+/* ============================================
+   BUILD THE COCKTAIL GAME
+   ============================================ */
+.build-container{max-width:760px;margin:0 auto}
+.build-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.build-streak{font-size:0.9rem;color:var(--amber);font-weight:600}
+.build-prompt{
+  display:flex;align-items:center;gap:18px;
+  background:linear-gradient(135deg,rgba(45,212,191,0.1),rgba(108,63,197,0.08));
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:24px;margin-bottom:24px;
+}
+.build-glass{
+  width:72px;height:72px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--purple-dim),var(--bg-surface));
+  border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;font-size:2.4rem;
+}
+.build-instruction{font-size:0.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted)}
+.build-prompt h2{font-size:1.6rem;margin:2px 0}
+.build-hint{font-size:0.78rem;color:var(--text-dim)}
+.build-shelf{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:10px;margin-bottom:24px;
+}
+.shelf-item{
+  background:var(--bg-card);
+  border:2px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 12px;
+  font-size:0.85rem;font-weight:500;
+  color:var(--text);
+  transition:var(--transition);
+  text-align:center;
+}
+.shelf-item:hover:not(.locked){border-color:var(--teal);background:var(--bg-card-hover)}
+.shelf-item.selected{
+  border-color:var(--teal);
+  background:rgba(45,212,191,0.15);
+  box-shadow:0 0 0 1px var(--teal) inset;
+}
+.shelf-item.locked{cursor:default}
+.shelf-item.right{border-color:var(--green)!important;background:rgba(34,197,94,0.18)!important;color:#fff}
+.shelf-item.right::after{content:' \2713';color:var(--green)}
+.shelf-item.wrong{border-color:var(--rose)!important;background:rgba(244,63,94,0.15)!important;opacity:0.8}
+.shelf-item.wrong::after{content:' \2717';color:var(--rose)}
+.shelf-item.missed{border-style:dashed;border-color:var(--gold)!important;color:var(--gold)}
+.build-actions{text-align:center;margin-bottom:16px}
+.build-feedback{
+  border-radius:var(--radius);
+  padding:20px 24px;text-align:center;
+  animation:fadeIn 0.3s ease;
+}
+.build-feedback.good{background:rgba(34,197,94,0.1);border:1px solid var(--green-dim)}
+.build-feedback.bad{background:rgba(244,63,94,0.08);border:1px solid var(--rose-dim)}
+.build-feedback .bf-title{font-size:1.2rem;font-weight:700;margin-bottom:4px}
+.build-feedback .bf-sub{font-size:0.85rem;color:var(--text-dim);margin-bottom:8px}
+.build-feedback .bf-recipe{font-size:0.8rem;color:var(--gold-light);margin-bottom:16px}
+
+.results-daily-tag{
+  display:inline-block;
+  background:rgba(212,165,67,0.15);
+  border:1px solid var(--gold-dim);
+  color:var(--gold);
+  font-size:0.8rem;font-weight:600;
+  padding:6px 16px;border-radius:20px;
+  margin-bottom:16px;
+}
+
+/* ============================================
    ACHIEVEMENTS
    ============================================ */
 .achievements-grid{
@@ -1077,6 +1307,9 @@ a{color:inherit;text-decoration:none}
       <div class="nav-item" data-page="quiz">
         <span class="nav-icon">&#9889;</span> Quiz Arena
       </div>
+      <div class="nav-item" data-page="games">
+        <span class="nav-icon">&#127918;</span> Games
+      </div>
       <div class="nav-item" data-page="achievements">
         <span class="nav-icon">&#127942;</span> Achievements
       </div>
@@ -1110,6 +1343,9 @@ a{color:inherit;text-decoration:none}
           </div>
         </div>
       </div>
+
+      <!-- DAILY CHALLENGE -->
+      <div class="daily-banner" id="dailyBanner" onclick="startDailyChallenge()"></div>
 
       <div class="dashboard-grid">
         <div class="dash-card" onclick="navigateTo('flashcards')">
@@ -1192,6 +1428,7 @@ a{color:inherit;text-decoration:none}
 
         <div class="fc-settings">
           <button class="filter-btn active" onclick="setFcFilter(this,'all')">All Cocktails</button>
+          <button class="filter-btn" onclick="setFcFilter(this,'due')">&#9202; Due Today</button>
           <button class="filter-btn" onclick="setFcFilter(this,'weak')">Weak Spots</button>
           <button class="filter-btn" onclick="setFcFilter(this,'classics')">Classics Only</button>
           <button class="filter-btn" onclick="setFcFilter(this,'specials')">Bar Specials</button>
@@ -1213,6 +1450,7 @@ a{color:inherit;text-decoration:none}
 
       <div class="academy-tabs">
         <button class="academy-tab active" onclick="setAcademyTab(this,'methods')">Methods</button>
+        <button class="academy-tab" onclick="setAcademyTab(this,'history')">History</button>
         <button class="academy-tab" onclick="setAcademyTab(this,'glassware')">Glassware</button>
         <button class="academy-tab" onclick="setAcademyTab(this,'spirits')">Spirit Families</button>
         <button class="academy-tab" onclick="setAcademyTab(this,'balance')">Balance & Flavour</button>
@@ -1231,6 +1469,16 @@ a{color:inherit;text-decoration:none}
       </div>
       <div id="quizActive" style="display:none"></div>
       <div id="quizResults" style="display:none"></div>
+    </div>
+
+    <!-- GAMES -->
+    <div class="page" id="page-games">
+      <div id="gamesMenu">
+        <h2 class="section-title">Mixology Games</h2>
+        <p class="section-subtitle">Hands-on challenges to make the knowledge stick.</p>
+        <div class="quiz-modes" id="gamesModes"></div>
+      </div>
+      <div id="buildGame" style="display:none"></div>
     </div>
 
     <!-- ACHIEVEMENTS -->
@@ -1255,46 +1503,46 @@ const COCKTAILS = [
   // CLASSICS
   {id:"amaretto-sour",name:"Amaretto Sour",category:"classic",ingredients:[{qty:"50 ml",item:"Amaretto"},{qty:"25 ml",item:"Lemon Juice (fresh)"},{qty:"10 ml",item:"Sugar Syrup"},{qty:"few drops",item:"Foamer"}],method:"Wet & dry shake, double strain",glass:"Rocks",garnish:"Lemon Twist",funFact:"A maraschino cherry garnish can also be used, as well as around 5-10ml of cherry liqueur.",tags:["shake"],allergens:["Nuts"]},
   {id:"alexander",name:"Alexander",category:"classic",ingredients:[{qty:"30 ml",item:"Cognac"},{qty:"30 ml",item:"Crème de Cacao"},{qty:"30 ml",item:"Double Cream"}],method:"Shake & Double Strain",glass:"Martini",garnish:"1x Coffee Bean",funFact:"Appears in James Bond books. Classically, ground nutmeg is used as a garnish.",tags:["shake"],allergens:["Milk"]},
-  {id:"aperol-spritz",name:"Aperol Spritz",category:"classic",ingredients:[{qty:"50 ml",item:"Aperol"},{qty:"splash",item:"Prosecco"},{qty:"top with",item:"Soda Water"}],method:"Build",glass:"Large Wine Glass",garnish:"Orange Slice",funFact:"Italian in origin, an orange twist can also be a garnish.",tags:["build"],allergens:["Sulphites"]},
+  {id:"aperol-spritz",name:"Aperol Spritz",category:"classic",ingredients:[{qty:"90 ml",item:"Prosecco"},{qty:"60 ml",item:"Aperol"},{qty:"splash",item:"Soda Water"}],method:"Build",glass:"Large Wine Glass",garnish:"Orange Slice",funFact:"Italian in origin, an orange twist can also be a garnish.",tags:["build"],allergens:["Sulphites"]},
   {id:"baby-guinness",name:"Baby Guinness",category:"classic",ingredients:[{qty:"20 ml",item:"Coffee Liqueur"},{qty:"5 ml",item:"Bailey's"}],method:"Layer",glass:"Shot",garnish:"None",funFact:"Resembles a tiny glass of stout.",tags:["layer"],allergens:["Milk"]},
-  {id:"black-russian",name:"Black Russian",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"25 ml",item:"Coffee Liqueur"}],method:"Stir",glass:"Rocks",garnish:"None",funFact:"Created in Brussels in the 1940s.",tags:["stir"],allergens:[]},
-  {id:"bloody-mary",name:"Bloody Mary",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"25 ml",item:"Lemon Juice"},{qty:"3 dash",item:"Worcester Sauce"},{qty:"3 dash",item:"Tabasco"},{qty:"top with",item:"Tomato Juice"},{qty:"pinch",item:"Salt & Pepper"}],method:"Build & Stir",glass:"Highball",garnish:"Lemon slice or celery stick",funFact:"Often called a hangover cure, popularised in Paris by American expats. Sometimes uses celery salt instead of regular salt.",tags:["build"],allergens:[]},
+  {id:"black-russian",name:"Black Russian",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"20 ml",item:"Coffee Liqueur"}],method:"Stir",glass:"Rocks",garnish:"None",funFact:"Created in Brussels in the 1940s.",tags:["stir"],allergens:[]},
+  {id:"bloody-mary",name:"Bloody Mary",category:"classic",ingredients:[{qty:"45 ml",item:"Vodka"},{qty:"90 ml",item:"Tomato Juice"},{qty:"15 ml",item:"Lemon Juice"},{qty:"2 dash",item:"Worcestershire Sauce"},{qty:"dash",item:"Tabasco"},{qty:"pinch",item:"Celery Salt & Pepper"}],method:"Build & Stir",glass:"Highball",garnish:"Lemon slice or celery stick",funFact:"Often called a hangover cure, popularised in Paris by American expats. Sometimes uses celery salt instead of regular salt.",tags:["build"],allergens:[]},
   {id:"blue-lagoon",name:"Blue Lagoon",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"25 ml",item:"Blue Curaçao"},{qty:"top with",item:"Lemonade"},{qty:"",item:"Crushed Ice"}],method:"Stir",glass:"Highball",garnish:"Lemon Slice",funFact:"The drink's blue colour was new and exciting in the 1970s. Bless their hearts.",tags:["stir"],allergens:[]},
-  {id:"caipirinha",name:"Caipirinha",category:"classic",ingredients:[{qty:"50 ml",item:"Cachaça"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"4x",item:"Lime Wedges"},{qty:"",item:"Crushed Ice"}],method:"Muddle and Stir",glass:"Rocks",garnish:"Lime Wedge",funFact:"Cachaça is a popular Brazilian spirit made from sugarcane.",tags:["muddle"],allergens:[]},
-  {id:"clover-club",name:"Clover Club",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"15 ml",item:"Lemon Juice (fresh)"},{qty:"15 ml",item:"Raspberry Syrup"},{qty:"few drops",item:"Foamer"}],method:"Wet & dry shake, double strain",glass:"Coupe",garnish:"1x Raspberry",funFact:"A berry-forward pre-prohibition take on a Gin Sour.",tags:["shake"],allergens:[]},
-  {id:"cosmopolitan",name:"Cosmopolitan",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka (Citrus)"},{qty:"25 ml",item:"Triple Sec"},{qty:"30 ml",item:"Cranberry Juice"},{qty:"15 ml",item:"Lime Juice"}],method:"Shake & double strain",glass:"Martini",garnish:"Orange Twist",funFact:"A late 20th-century queer classic, now a staple in all cocktail bars.",tags:["shake"],allergens:[]},
-  {id:"cuba-libre",name:"Cuba Libre",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"10 ml",item:"Lime Juice (fresh)"},{qty:"top with",item:"Cola"}],method:"Build",glass:"Highball",garnish:"Lime Wedge",funFact:"The original rum-and-coke, over a century old, created in Havana, Cuba.",tags:["build"],allergens:[]},
-  {id:"daiquiri",name:"Daiquiri",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"25 ml",item:"Lime Juice"},{qty:"10 ml",item:"Sugar Syrup"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lime Wheel",funFact:"One of the most important cocktails in history — simplicity perfected.",tags:["shake"],allergens:[]},
-  {id:"dark-stormy",name:"Dark & Stormy",category:"classic",ingredients:[{qty:"50 ml",item:"Dark Rum"},{qty:"top with",item:"Ginger Ale"}],method:"Build",glass:"Highball",garnish:"Lime Wedge",funFact:"The national drink of Bermuda, over 200 years old.",tags:["build"],allergens:[]},
-  {id:"espresso-martini",name:"Espresso Martini",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"2 shots",item:"Espresso"},{qty:"25 ml",item:"Coffee Liqueur"},{qty:"10 ml",item:"Sugar Syrup"}],method:"Shake & double strain",glass:"Coupe or Martini",garnish:"3x Coffee Beans",funFact:"The three coffee beans symbolise health, wealth, and happiness.",tags:["shake"],allergens:[]},
-  {id:"french-75",name:"French 75",category:"classic",ingredients:[{qty:"30 ml",item:"Gin"},{qty:"20 ml",item:"Lemon Juice (fresh)"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"top with",item:"Champagne"}],method:"Shake & double strain",glass:"Flute",garnish:"Lemon Twist",funFact:"Originally created in Paris, named soixante-quinze.",tags:["shake"],allergens:["Sulphites"]},
+  {id:"caipirinha",name:"Caipirinha",category:"classic",ingredients:[{qty:"60 ml",item:"Cachaça"},{qty:"1x",item:"Lime (in wedges)"},{qty:"4 tsp",item:"Cane Sugar"},{qty:"",item:"Crushed Ice"}],method:"Muddle and Stir",glass:"Rocks",garnish:"Lime Wedge",funFact:"Cachaça is a popular Brazilian spirit made from sugarcane.",tags:["muddle"],allergens:[]},
+  {id:"clover-club",name:"Clover Club",category:"classic",ingredients:[{qty:"45 ml",item:"Gin"},{qty:"15 ml",item:"Lemon Juice (fresh)"},{qty:"15 ml",item:"Raspberry Syrup"},{qty:"few drops",item:"Foamer"}],method:"Wet & dry shake, double strain",glass:"Coupe",garnish:"1x Raspberry",funFact:"A berry-forward pre-prohibition take on a Gin Sour.",tags:["shake"],allergens:[]},
+  {id:"cosmopolitan",name:"Cosmopolitan",category:"classic",ingredients:[{qty:"40 ml",item:"Vodka (Citrus)"},{qty:"15 ml",item:"Triple Sec"},{qty:"15 ml",item:"Lime Juice"},{qty:"30 ml",item:"Cranberry Juice"}],method:"Shake & double strain",glass:"Martini",garnish:"Orange Twist",funFact:"A late 20th-century queer classic, now a staple in all cocktail bars.",tags:["shake"],allergens:[]},
+  {id:"cuba-libre",name:"Cuba Libre",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"10 ml",item:"Lime Juice (fresh)"},{qty:"120 ml",item:"Cola"}],method:"Build",glass:"Highball",garnish:"Lime Wedge",funFact:"The original rum-and-coke, over a century old, created in Havana, Cuba.",tags:["build"],allergens:[]},
+  {id:"daiquiri",name:"Daiquiri",category:"classic",ingredients:[{qty:"60 ml",item:"White Rum"},{qty:"20 ml",item:"Lime Juice (fresh)"},{qty:"2 bar spoons",item:"Caster Sugar"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lime Wheel",funFact:"One of the most important cocktails in history — simplicity perfected.",tags:["shake"],allergens:[]},
+  {id:"dark-stormy",name:"Dark & Stormy",category:"classic",ingredients:[{qty:"60 ml",item:"Dark Rum"},{qty:"100 ml",item:"Ginger Beer"}],method:"Build",glass:"Highball",garnish:"Lime Wedge",funFact:"The national drink of Bermuda, over 200 years old.",tags:["build"],allergens:[]},
+  {id:"espresso-martini",name:"Espresso Martini",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"30 ml",item:"Coffee Liqueur"},{qty:"10 ml",item:"Sugar Syrup"},{qty:"1 shot",item:"Espresso"}],method:"Shake & double strain",glass:"Coupe or Martini",garnish:"3x Coffee Beans",funFact:"The three coffee beans symbolise health, wealth, and happiness.",tags:["shake"],allergens:[]},
+  {id:"french-75",name:"French 75",category:"classic",ingredients:[{qty:"30 ml",item:"Gin"},{qty:"15 ml",item:"Lemon Juice (fresh)"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"60 ml",item:"Champagne"}],method:"Shake & double strain",glass:"Flute",garnish:"Lemon Twist",funFact:"Originally created in Paris, named soixante-quinze.",tags:["shake"],allergens:["Sulphites"]},
   {id:"french-martini",name:"French Martini",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"20 ml",item:"Chambord"},{qty:"30 ml",item:"Pineapple Juice"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lemon Twist",funFact:"Not from France as the name implies, originated in New York.",tags:["shake"],allergens:[]},
   {id:"gimlet",name:"Gimlet",category:"classic",ingredients:[{qty:"60 ml",item:"Gin"},{qty:"15 ml",item:"Lime Juice (fresh)"},{qty:"15 ml",item:"Sugar Syrup"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lime Wheel",funFact:"Allegedly named after a naval officer trying to reduce scurvy rates in his crew.",tags:["shake"],allergens:[]},
-  {id:"gin-basil-smash",name:"Gin Basil Smash",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"25 ml",item:"Lemon Juice (fresh)"},{qty:"20 ml",item:"Sugar Syrup"},{qty:"10x",item:"Basil Leaves"}],method:"Shake & double strain",glass:"Coupe",garnish:"No garnish",funFact:"Invented by a German bartender in 2008.",tags:["shake","muddle"],allergens:[]},
+  {id:"gin-basil-smash",name:"Gin Basil Smash",category:"classic",ingredients:[{qty:"60 ml",item:"Gin"},{qty:"22.5 ml",item:"Lemon Juice (fresh)"},{qty:"22.5 ml",item:"Sugar Syrup"},{qty:"10x",item:"Basil Leaves"}],method:"Shake & double strain",glass:"Coupe",garnish:"No garnish",funFact:"Invented by a German bartender in 2008.",tags:["shake","muddle"],allergens:[]},
   {id:"godfather",name:"Godfather",category:"classic",ingredients:[{qty:"50 ml",item:"Bourbon"},{qty:"25 ml",item:"Amaretto"}],method:"Stir",glass:"Rocks",garnish:"Orange Twist",funFact:"Named after the Brando & Pacino movie of the same name.",tags:["stir"],allergens:["Nuts"]},
-  {id:"irish-coffee",name:"Irish Coffee",category:"classic",ingredients:[{qty:"50 ml",item:"Irish Whiskey"},{qty:"5 ml",item:"Sugar Syrup"},{qty:"2 shots",item:"Espresso & Hot Water"},{qty:"40 ml",item:"Fresh Double Cream"}],method:"Build, shake cream & layer",glass:"Latte Glass",garnish:"3x Coffee Beans",funFact:"French coffee: cognac. Gaelic coffee: scotch. Calypso coffee: dark rum. Russian coffee: vodka.",tags:["build","layer"],allergens:["Milk"]},
-  {id:"manhattan",name:"Manhattan (Sweet)",category:"classic",ingredients:[{qty:"50 ml",item:"Bourbon or Rye"},{qty:"15 ml",item:"Sweet Vermouth"}],method:"Stir & strain",glass:"Martini",garnish:"Cherry",funFact:"So named because it only includes sweet vermouth.",tags:["stir"],allergens:["Sulphites"]},
-  {id:"margarita",name:"Margarita",category:"classic",ingredients:[{qty:"50 ml",item:"Tequila"},{qty:"25 ml",item:"Triple Sec"},{qty:"25 ml",item:"Lime Juice (fresh)"}],method:"Shake & double strain",glass:"Coupe",garnish:"Salt rim & lime",funFact:"The name means 'daisy' in Spanish, as the drink is a tequila-forward twist on a classic daisy.",tags:["shake"],allergens:[]},
+  {id:"irish-coffee",name:"Irish Coffee",category:"classic",ingredients:[{qty:"50 ml",item:"Irish Whiskey"},{qty:"120 ml",item:"Hot Coffee"},{qty:"50 ml",item:"Fresh Cream"},{qty:"1 tsp",item:"Sugar"}],method:"Build, float cream",glass:"Latte Glass",garnish:"None",funFact:"French coffee: cognac. Gaelic coffee: scotch. Calypso coffee: dark rum. Russian coffee: vodka.",tags:["build","layer"],allergens:["Milk"]},
+  {id:"manhattan",name:"Manhattan (Sweet)",category:"classic",ingredients:[{qty:"50 ml",item:"Rye Whiskey"},{qty:"20 ml",item:"Sweet Vermouth"},{qty:"1 dash",item:"Angostura Bitters"}],method:"Stir & strain",glass:"Martini",garnish:"Cherry",funFact:"So named because it only includes sweet vermouth.",tags:["stir"],allergens:["Sulphites"]},
+  {id:"margarita",name:"Margarita",category:"classic",ingredients:[{qty:"50 ml",item:"Tequila (100% Agave)"},{qty:"20 ml",item:"Triple Sec"},{qty:"15 ml",item:"Lime Juice (fresh)"}],method:"Shake & double strain",glass:"Coupe",garnish:"Salt rim & lime",funFact:"The name means 'daisy' in Spanish, as the drink is a tequila-forward twist on a classic daisy.",tags:["shake"],allergens:[]},
   {id:"mimosa",name:"Mimosa",category:"classic",ingredients:[{qty:"75 ml",item:"Orange Juice"},{qty:"75 ml",item:"Prosecco"}],method:"Build",glass:"Flute",garnish:"No garnish",funFact:"A classic brunch cocktail, originally from the Ritz in Paris.",tags:["build"],allergens:["Sulphites"]},
-  {id:"mojito",name:"Mojito (Classic)",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"4x",item:"Lime Wedges"},{qty:"10x",item:"Mint Leaves"},{qty:"top with",item:"Soda"},{qty:"",item:"Crushed Ice"}],method:"Muddle & churn",glass:"Highball",garnish:"Mint Sprig",funFact:"At least 500 years old.",tags:["muddle"],allergens:[]},
-  {id:"moscow-mule",name:"Moscow Mule",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"25 ml",item:"Lime Juice"},{qty:"½ bottle",item:"Ginger Ale"},{qty:"top with",item:"Soda"},{qty:"",item:"Crushed Ice"}],method:"Build",glass:"Highball",garnish:"Lime Wedge",funFact:"Invented in 1940s US to boost vodka and ginger ale sales.",tags:["build"],allergens:[]},
-  {id:"negroni",name:"Negroni",category:"classic",ingredients:[{qty:"25 ml",item:"Gin"},{qty:"25 ml",item:"Campari"},{qty:"25 ml",item:"Sweet Vermouth"}],method:"Stir",glass:"Rocks",garnish:"Orange Twist",funFact:"A variation is the Negroni Sbagliato, with prosecco instead of gin.",tags:["stir"],allergens:["Sulphites"]},
-  {id:"new-york-sour",name:"New York Sour",category:"classic",ingredients:[{qty:"50 ml",item:"Bourbon or Rye Whiskey"},{qty:"25 ml",item:"Lemon Juice"},{qty:"20 ml",item:"Sugar Syrup"},{qty:"few drops",item:"Foamer"},{qty:"15 ml",item:"Red Wine"}],method:"Wet & dry shake, float red wine",glass:"Rocks",garnish:"Lemon Twist",funFact:"A twist on a whiskey sour with red wine. Classically Maker's Mark is floated.",tags:["shake"],allergens:["Sulphites"]},
-  {id:"old-fashioned",name:"Old Fashioned (Classic)",category:"classic",ingredients:[{qty:"50 ml",item:"Bourbon or Rye Whiskey"},{qty:"1x",item:"Brown Sugar Cube"},{qty:"4x",item:"Angostura Bitters"},{qty:"2x",item:"Orange Bitters"}],method:"Stir",glass:"Rocks",garnish:"Orange Twist",funFact:"5-10ml brown sugar syrup made with a 2:1 ratio of sugar to boiling water can be used instead.",tags:["stir"],allergens:[]},
-  {id:"paloma",name:"Paloma",category:"classic",ingredients:[{qty:"50 ml",item:"Tequila"},{qty:"15 ml",item:"Lime Juice"},{qty:"pinch",item:"Salt"},{qty:"top with",item:"Pink Grapefruit Soda"}],method:"Build",glass:"Rocks",garnish:"Lime Wedge",funFact:"The national drink of Mexico.",tags:["build"],allergens:[]},
-  {id:"pina-colada",name:"Piña Colada",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"50 ml",item:"Pineapple Juice"},{qty:"25 ml",item:"Coconut Cream"},{qty:"15 ml",item:"Lime Juice"}],method:"Shake",glass:"Highball",garnish:"Lime Wheel",funFact:"If you like getting caught in the rain, or the national drink of Puerto Rico, this is the drink for you.",tags:["shake"],allergens:[]},
-  {id:"sazerac",name:"Sazerac",category:"classic",ingredients:[{qty:"50 ml",item:"Cognac"},{qty:"15 ml",item:"Absinthe"},{qty:"5 ml",item:"Sugar Syrup"},{qty:"3x",item:"Peychaud's Bitters"}],method:"Stir",glass:"Brandy",garnish:"Lemon Twist",funFact:"A New Orleans classic from the 1840s.",tags:["stir"],allergens:[]},
-  {id:"sex-on-the-beach",name:"Sex on the Beach",category:"classic",ingredients:[{qty:"25 ml",item:"Vodka"},{qty:"25 ml",item:"Peach Schnapps"},{qty:"50 ml",item:"Orange Juice"},{qty:"60 ml",item:"Cranberry Juice"},{qty:"",item:"Crushed Ice"}],method:"Build & churn",glass:"Highball",garnish:"Orange Slice",funFact:"A pillar of 1980s American drinks.",tags:["build"],allergens:[]},
-  {id:"sidecar",name:"Sidecar",category:"classic",ingredients:[{qty:"40 ml",item:"Cognac"},{qty:"30 ml",item:"Triple Sec"},{qty:"20 ml",item:"Lemon Juice"}],method:"Shake & strain",glass:"Coupe",garnish:"Orange Twist",funFact:"Originates from prohibition-era Paris when a soldier came to a bar in the sidecar of a motorbike.",tags:["shake"],allergens:[]},
-  {id:"singapore-sling",name:"Singapore Sling",category:"classic",ingredients:[{qty:"30 ml",item:"Gin"},{qty:"15 ml",item:"Cherry Liqueur"},{qty:"7.5 ml",item:"Triple Sec"},{qty:"7.5 ml",item:"Benedictine"},{qty:"50 ml",item:"Pineapple Juice"},{qty:"15 ml",item:"Lime Juice"},{qty:"10 ml",item:"Grenadine"},{qty:"2x dash",item:"Angostura Bitters"}],method:"Shake",glass:"Highball",garnish:"Cherry",funFact:"First invented in the Raffles Hotel, Singapore in 1915 by a bartender called Ngiam Tong Boon.",tags:["shake"],allergens:[]},
-  {id:"southside",name:"Southside",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"25 ml",item:"Lemon Juice"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"5x",item:"Mint Leaves"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lemon Twist",funFact:"Ascribed as being Al Capone's drink of choice.",tags:["shake"],allergens:[]},
-  {id:"tequila-sunrise",name:"Tequila Sunrise",category:"classic",ingredients:[{qty:"50 ml",item:"Tequila"},{qty:"15 ml",item:"Grenadine"},{qty:"top with",item:"Orange Juice"}],method:"Build & layer",glass:"Highball",garnish:"Orange Slice",funFact:"Popularised in the '70s by the Rolling Stones and the Eagles.",tags:["build"],allergens:[]},
+  {id:"mojito",name:"Mojito (Classic)",category:"classic",ingredients:[{qty:"45 ml",item:"White Rum"},{qty:"20 ml",item:"Lime Juice (fresh)"},{qty:"2 tsp",item:"Cane Sugar"},{qty:"6x",item:"Mint Sprigs"},{qty:"top with",item:"Soda Water"}],method:"Muddle & churn",glass:"Highball",garnish:"Mint Sprig",funFact:"At least 500 years old.",tags:["muddle"],allergens:[]},
+  {id:"moscow-mule",name:"Moscow Mule",category:"classic",ingredients:[{qty:"45 ml",item:"Vodka"},{qty:"10 ml",item:"Lime Juice"},{qty:"120 ml",item:"Ginger Beer"}],method:"Build",glass:"Highball",garnish:"Lime Wedge",funFact:"Invented in 1940s US to boost vodka and ginger ale sales.",tags:["build"],allergens:[]},
+  {id:"negroni",name:"Negroni",category:"classic",ingredients:[{qty:"30 ml",item:"Gin"},{qty:"30 ml",item:"Campari"},{qty:"30 ml",item:"Sweet Vermouth"}],method:"Stir",glass:"Rocks",garnish:"Orange Twist",funFact:"A variation is the Negroni Sbagliato, with prosecco instead of gin.",tags:["stir"],allergens:["Sulphites"]},
+  {id:"new-york-sour",name:"New York Sour",category:"classic",ingredients:[{qty:"60 ml",item:"Bourbon or Rye Whiskey"},{qty:"30 ml",item:"Lemon Juice"},{qty:"22.5 ml",item:"Sugar Syrup"},{qty:"few drops",item:"Foamer"},{qty:"15 ml",item:"Red Wine"}],method:"Wet & dry shake, float red wine",glass:"Rocks",garnish:"Lemon Twist",funFact:"A twist on a whiskey sour with red wine. Classically Maker's Mark is floated.",tags:["shake"],allergens:["Sulphites"]},
+  {id:"old-fashioned",name:"Old Fashioned (Classic)",category:"classic",ingredients:[{qty:"45 ml",item:"Bourbon or Rye Whiskey"},{qty:"1x",item:"Sugar Cube"},{qty:"2 dash",item:"Angostura Bitters"},{qty:"splash",item:"Water"}],method:"Stir",glass:"Rocks",garnish:"Orange Twist",funFact:"5-10ml brown sugar syrup made with a 2:1 ratio of sugar to boiling water can be used instead.",tags:["stir"],allergens:[]},
+  {id:"paloma",name:"Paloma",category:"classic",ingredients:[{qty:"50 ml",item:"Tequila (100% Agave)"},{qty:"5 ml",item:"Lime Juice"},{qty:"pinch",item:"Salt"},{qty:"100 ml",item:"Pink Grapefruit Soda"}],method:"Build",glass:"Rocks",garnish:"Lime Wedge",funFact:"The national drink of Mexico.",tags:["build"],allergens:[]},
+  {id:"pina-colada",name:"Piña Colada",category:"classic",ingredients:[{qty:"50 ml",item:"White Rum"},{qty:"30 ml",item:"Coconut Cream"},{qty:"50 ml",item:"Pineapple Juice"}],method:"Shake",glass:"Highball",garnish:"Lime Wheel",funFact:"If you like getting caught in the rain, or the national drink of Puerto Rico, this is the drink for you.",tags:["shake"],allergens:[]},
+  {id:"sazerac",name:"Sazerac",category:"classic",ingredients:[{qty:"50 ml",item:"Cognac"},{qty:"10 ml",item:"Absinthe (rinse)"},{qty:"1x",item:"Sugar Cube"},{qty:"2 dash",item:"Peychaud's Bitters"}],method:"Stir",glass:"Brandy",garnish:"Lemon Twist",funFact:"A New Orleans classic from the 1840s.",tags:["stir"],allergens:[]},
+  {id:"sex-on-the-beach",name:"Sex on the Beach",category:"classic",ingredients:[{qty:"40 ml",item:"Vodka"},{qty:"20 ml",item:"Peach Schnapps"},{qty:"40 ml",item:"Orange Juice"},{qty:"40 ml",item:"Cranberry Juice"}],method:"Build & churn",glass:"Highball",garnish:"Orange Slice",funFact:"A pillar of 1980s American drinks.",tags:["build"],allergens:[]},
+  {id:"sidecar",name:"Sidecar",category:"classic",ingredients:[{qty:"50 ml",item:"Cognac"},{qty:"20 ml",item:"Triple Sec"},{qty:"20 ml",item:"Lemon Juice"}],method:"Shake & strain",glass:"Coupe",garnish:"Orange Twist",funFact:"Originates from prohibition-era Paris when a soldier came to a bar in the sidecar of a motorbike.",tags:["shake"],allergens:[]},
+  {id:"singapore-sling",name:"Singapore Sling",category:"classic",ingredients:[{qty:"30 ml",item:"Gin"},{qty:"15 ml",item:"Cherry Liqueur"},{qty:"7.5 ml",item:"Triple Sec"},{qty:"7.5 ml",item:"Benedictine"},{qty:"120 ml",item:"Pineapple Juice"},{qty:"15 ml",item:"Lime Juice"},{qty:"10 ml",item:"Grenadine"},{qty:"1 dash",item:"Angostura Bitters"}],method:"Shake",glass:"Highball",garnish:"Cherry",funFact:"First invented in the Raffles Hotel, Singapore in 1915 by a bartender called Ngiam Tong Boon.",tags:["shake"],allergens:[]},
+  {id:"southside",name:"Southside",category:"classic",ingredients:[{qty:"60 ml",item:"Gin"},{qty:"30 ml",item:"Lemon Juice"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"6x",item:"Mint Leaves"}],method:"Shake & double strain",glass:"Coupe",garnish:"Lemon Twist",funFact:"Ascribed as being Al Capone's drink of choice.",tags:["shake"],allergens:[]},
+  {id:"tequila-sunrise",name:"Tequila Sunrise",category:"classic",ingredients:[{qty:"45 ml",item:"Tequila"},{qty:"90 ml",item:"Orange Juice"},{qty:"15 ml",item:"Grenadine"}],method:"Build & layer",glass:"Highball",garnish:"Orange Slice",funFact:"Popularised in the '70s by the Rolling Stones and the Eagles.",tags:["build"],allergens:[]},
   {id:"tom-collins",name:"Tom Collins",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"25 ml",item:"Lemon Juice"},{qty:"15 ml",item:"Sugar Syrup"},{qty:"top with",item:"Soda"}],method:"Build & layer",glass:"Highball",garnish:"Lime Wedge",funFact:"Originally made with Old Tom gin in the 19th century.",tags:["build"],allergens:[]},
-  {id:"tommys-margarita",name:"Tommy's Margarita",category:"classic",ingredients:[{qty:"60 ml",item:"Tequila"},{qty:"30 ml",item:"Lime Juice (fresh)"},{qty:"20 ml",item:"Agave Syrup"}],method:"Shake",glass:"Rocks",garnish:"Salt rim & lime",funFact:"A '90s twist on a classic marg from Tommy's bar in San Francisco.",tags:["shake"],allergens:[]},
-  {id:"whiskey-sour",name:"Whiskey Sour",category:"classic",ingredients:[{qty:"50 ml",item:"Whiskey"},{qty:"25 ml",item:"Lemon Juice"},{qty:"10 ml",item:"Sugar Syrup"},{qty:"few drops",item:"Foamer"}],method:"Wet & dry shake",glass:"Rocks",garnish:"Lemon Twist & Bitters",funFact:"Likely originated from soldiers mixing citrus with spirits to combat scurvy.",tags:["shake"],allergens:[]},
-  {id:"white-lady",name:"White Lady",category:"classic",ingredients:[{qty:"50 ml",item:"Gin"},{qty:"30 ml",item:"Triple Sec"},{qty:"20 ml",item:"Lemon Juice (fresh)"}],method:"Shake",glass:"Coupe",garnish:"Lemon Twist",funFact:"Originally contained crème de menthe, in 1919.",tags:["shake"],allergens:[]},
-  {id:"white-russian",name:"White Russian",category:"classic",ingredients:[{qty:"25 ml",item:"Vodka"},{qty:"25 ml",item:"Coffee Liqueur"},{qty:"30 ml",item:"Double Cream"}],method:"Build, shake cream & layer",glass:"Coupe",garnish:"Chocolate Powder",funFact:"A creamy twist on a Black Russian.",tags:["build","layer"],allergens:["Milk"]},
-  {id:"zombie",name:"Zombie",category:"classic",ingredients:[{qty:"25 ml",item:"White Rum"},{qty:"25 ml",item:"Dark Rum"},{qty:"25 ml",item:"Lime Juice"},{qty:"75 ml",item:"Pineapple Juice"},{qty:"5 ml",item:"Grenadine"}],method:"Build & stir",glass:"Highball",garnish:"Orange Slice",funFact:"A classic 1930s Tiki hangover cure, strong enough to awaken the dead. Sometimes contains overproof rum.",tags:["build"],allergens:[]},
+  {id:"tommys-margarita",name:"Tommy's Margarita",category:"classic",ingredients:[{qty:"60 ml",item:"Tequila (100% Agave)"},{qty:"30 ml",item:"Lime Juice (fresh)"},{qty:"30 ml",item:"Agave Syrup"}],method:"Shake",glass:"Rocks",garnish:"Salt rim & lime",funFact:"A '90s twist on a classic marg from Tommy's bar in San Francisco.",tags:["shake"],allergens:[]},
+  {id:"whiskey-sour",name:"Whiskey Sour",category:"classic",ingredients:[{qty:"45 ml",item:"Bourbon Whiskey"},{qty:"25 ml",item:"Lemon Juice"},{qty:"20 ml",item:"Sugar Syrup"},{qty:"few drops",item:"Foamer"}],method:"Wet & dry shake",glass:"Rocks",garnish:"Lemon Twist & Bitters",funFact:"Likely originated from soldiers mixing citrus with spirits to combat scurvy.",tags:["shake"],allergens:[]},
+  {id:"white-lady",name:"White Lady",category:"classic",ingredients:[{qty:"40 ml",item:"Gin"},{qty:"30 ml",item:"Triple Sec"},{qty:"20 ml",item:"Lemon Juice (fresh)"}],method:"Shake",glass:"Coupe",garnish:"Lemon Twist",funFact:"Originally contained crème de menthe, in 1919.",tags:["shake"],allergens:[]},
+  {id:"white-russian",name:"White Russian",category:"classic",ingredients:[{qty:"50 ml",item:"Vodka"},{qty:"20 ml",item:"Coffee Liqueur"},{qty:"30 ml",item:"Fresh Cream"}],method:"Build, shake cream & layer",glass:"Coupe",garnish:"Chocolate Powder",funFact:"A creamy twist on a Black Russian.",tags:["build","layer"],allergens:["Milk"]},
+  {id:"zombie",name:"Zombie",category:"classic",ingredients:[{qty:"45 ml",item:"Jamaican Dark Rum"},{qty:"45 ml",item:"Gold Puerto Rican Rum"},{qty:"30 ml",item:"Demerara Rum"},{qty:"20 ml",item:"Lime Juice"},{qty:"15 ml",item:"Falernum"},{qty:"15 ml",item:"Donn's Mix"},{qty:"1 tsp",item:"Grenadine"},{qty:"1 dash",item:"Angostura Bitters"},{qty:"6 drops",item:"Pernod"}],method:"Blend",glass:"Highball",garnish:"Mint Leaves",funFact:"A classic 1930s Tiki hangover cure, strong enough to awaken the dead. Sometimes contains overproof rum.",tags:["build"],allergens:[]},
   // BAR SPECIALS
   {id:"baileys-espresso-martini",name:"Baileys Espresso Martini",category:"special",ingredients:[{qty:"50 ml",item:"Baileys"},{qty:"25 ml",item:"Absolut Vodka"},{qty:"1x",item:"Double Espresso"},{qty:"12.5 ml",item:"Cream"},{qty:"12.5 ml",item:"Chocolate Syrup"},{qty:"10 ml",item:"Sugar Syrup"}],method:"Shake & Strain",glass:"Martini",garnish:"3 Coffee Beans",funFact:"A rich, creamy twist on the classic espresso martini.",tags:["shake"],allergens:["Milk"]},
   {id:"raspberry-rose-mojito",name:"Raspberry & Rose Mojito",category:"special",ingredients:[{qty:"50 ml",item:"Bacardi Carta Blanca"},{qty:"12.5 ml",item:"Raspberry Syrup"},{qty:"25 ml",item:"Lime Juice"},{qty:"10x",item:"Mint Leaves"},{qty:"top with",item:"LE Raspberry & Rose"}],method:"Build & churn (crushed ice)",glass:"Highball",garnish:"Mint Sprig",funFact:"A floral, fruity twist on the classic mojito.",tags:["build","muddle"],allergens:[]},
@@ -1317,6 +1565,85 @@ const COCKTAILS = [
   {id:"french-spritz",name:"French Spritz",category:"lowalc",ingredients:[{qty:"50 ml",item:"Lillet"},{qty:"12.5 ml",item:"Martini Ambrato"},{qty:"50 ml",item:"Apple Juice"},{qty:"50 ml",item:"Prosecco"}],method:"Build, top with Prosecco, stir",glass:"Wine Glass",garnish:"None",funFact:"A light, floral, effervescent low-alcohol spritz.",tags:["build"],allergens:["Sulphites"]},
   {id:"celtic-garden",name:"Celtic Garden",category:"noalc",ingredients:[{qty:"50 ml",item:"Everleaf Mountain"},{qty:"25 ml",item:"Lemon Juice"},{qty:"20 ml",item:"Blood Orange Syrup"},{qty:"top",item:"Blood Orange & Elderflower Tonic"}],method:"Build",glass:"Balloon Glass",garnish:"Lemon Slice",funFact:"A complex, botanical non-alcoholic cocktail with citrus depth.",tags:["build"],allergens:[]},
 ];
+
+// ============================================
+// COCKTAIL LORE — history, origins, tasting notes & steps
+// Merged into COCKTAILS at runtime by id. Classics are verified
+// against IBA official specs + reputable sources (liquor.com,
+// Difford's Guide, Wikipedia). House specials carry bar provenance.
+// ============================================
+const COCKTAIL_LORE = {
+  "amaretto-sour":{origin:{year:"1970s",place:"USA",creator:"Unknown"},history:"A sweet-and-sour built on Italian almond liqueur. Bartender Jeffrey Morgenthaler's 2012 rebalanced version — adding bourbon and egg white — is widely credited with rescuing it from its overly sweet reputation.",abv:"~18%",difficulty:"Easy",flavor:["Sour","Sweet","Nutty"],steps:["Add amaretto, lemon, syrup and foamer to a shaker.","Dry shake (no ice) to build foam, then shake again with ice.","Double strain over fresh ice into a rocks glass.","Garnish with a lemon twist (and a cherry, if you like)."]},
+  "alexander":{origin:{year:"c.1910s",place:"London / New York",creator:"Disputed"},history:"Originally a gin drink (the Brandy Alexander is the cognac descendant that eclipsed it). Said to have been popularised at the 1922 London wedding of Princess Mary.",abv:"~20%",difficulty:"Easy",flavor:["Creamy","Sweet","Boozy"],steps:["Add cognac, crème de cacao and cream to a shaker with ice.","Shake hard until well chilled and frothy.","Double strain into a chilled martini glass.","Grate fresh nutmeg over the top."]},
+  "aperol-spritz":{origin:{year:"1919 (Aperol) / 1950s (spritz)",place:"Padua & Venice, Italy",creator:"Barbieri brothers (Aperol)"},history:"The spritz tradition dates to Austrian soldiers cutting strong Veneto wine with water in the 1800s. The Aperol version exploded globally after a Campari Group marketing push in the 2000s.",abv:"~9%",difficulty:"Easy",flavor:["Bitter","Refreshing","Sparkling"],steps:["Fill a large wine glass with ice.","Add Aperol, then prosecco, then a splash of soda — in that order.","Stir gently once.","Garnish with an orange slice."]},
+  "baby-guinness":{origin:{year:"Late 20th C.",place:"Ireland / UK",creator:"Unknown"},history:"A novelty shot that mimics a pint of stout — coffee liqueur for the body, a cream-liqueur float for the head. Contains no actual Guinness.",abv:"~17%",difficulty:"Easy",flavor:["Sweet","Coffee","Creamy"],steps:["Pour coffee liqueur into a shot glass.","Slowly float Baileys over the back of a bar spoon to form the 'head'.","Serve immediately."]},
+  "black-russian":{origin:{year:"1949",place:"Brussels, Belgium",creator:"Gustave Tops"},history:"Created by bartender Gustave Tops at the Hotel Metropole for the U.S. ambassador to Luxembourg. The 'Russian' name nods only to the vodka.",abv:"~30%",difficulty:"Easy",flavor:["Boozy","Coffee","Sweet"],steps:["Fill a rocks glass with ice.","Pour vodka and coffee liqueur over the ice.","Stir briefly to combine."]},
+  "bloody-mary":{origin:{year:"c.1921–1934",place:"Paris / New York",creator:"Fernand Petiot"},history:"Bartender Fernand Petiot claimed to have created it at Harry's New York Bar in Paris, refining it at the St. Regis in NYC where it was briefly renamed the 'Red Snapper'.",abv:"~12%",difficulty:"Intermediate",flavor:["Savoury","Spicy","Sour"],steps:["Add vodka, lemon, Worcester, Tabasco and seasoning to a highball with ice.","Top with tomato juice.","Roll between two tins (or stir gently) to mix without flattening.","Garnish with a celery stick or lemon."]},
+  "blue-lagoon":{origin:{year:"1972",place:"Paris, France",creator:"Andy MacElhone"},history:"Invented at Harry's New York Bar in Paris by Andy MacElhone, son of the bar's founder. Its electric-blue colour was a 1970s sensation.",abv:"~12%",difficulty:"Easy",flavor:["Sweet","Citrus","Refreshing"],steps:["Add vodka and blue curaçao to a highball filled with crushed ice.","Top with lemonade.","Stir gently and garnish with a lemon slice."]},
+  "caipirinha":{origin:{year:"Early 1900s",place:"São Paulo, Brazil",creator:"Unknown"},history:"Brazil's national cocktail, born in the sugarcane region of São Paulo — possibly as a folk remedy with lime, garlic and honey before settling into its modern form. Cachaça is fermented sugarcane juice, distinct from molasses-based rum.",abv:"~25%",difficulty:"Easy",flavor:["Sour","Sweet","Refreshing"],steps:["Muddle lime wedges with sugar syrup in a rocks glass.","Fill the glass with crushed ice.","Add cachaça and churn with a bar spoon.","Top with more crushed ice; garnish with a lime wedge."]},
+  "clover-club":{origin:{year:"c.1900s",place:"Philadelphia, USA",creator:"Unknown"},history:"Named for the Clover Club, a gentlemen's literary group that met at Philadelphia's Bellevue-Stratford Hotel before Prohibition. A rare pre-Pro classic that was unashamedly pink.",abv:"~18%",difficulty:"Intermediate",flavor:["Sour","Fruity","Silky"],steps:["Add gin, lemon, raspberry syrup and foamer to a shaker.","Dry shake without ice to aerate.","Add ice and shake again until cold.","Double strain into a coupe; garnish with a raspberry."]},
+  "cosmopolitan":{origin:{year:"1980s",place:"USA",creator:"Toby Cecchini / disputed"},history:"The modern version is generally credited to Toby Cecchini in New York around 1988, building on a Miami/San Francisco template. It became a cultural icon through Sex and the City in the late 1990s.",abv:"~22%",difficulty:"Easy",flavor:["Sour","Fruity","Citrus"],steps:["Add citrus vodka, triple sec, cranberry and lime to a shaker with ice.","Shake until well chilled.","Double strain into a chilled martini glass.","Garnish with a flamed orange twist."]},
+  "cuba-libre":{origin:{year:"c.1900",place:"Havana, Cuba",creator:"Unknown"},history:"Born after Coca-Cola reached Cuba around the turn of the 20th century, its name (\"Free Cuba\") echoes the slogan of the Cuban War of Independence. The lime is what separates it from a plain rum and coke.",abv:"~12%",difficulty:"Easy",flavor:["Sweet","Citrus","Refreshing"],steps:["Squeeze lime into a highball and drop in the spent shell.","Fill with ice and add rum.","Top with cola and stir gently.","Garnish with a lime wedge."]},
+  "daiquiri":{origin:{year:"c.1898",place:"Daiquirí, Cuba",creator:"Jennings Cox (popularised)"},history:"Named after a beach and iron mine near Santiago de Cuba, where American engineer Jennings Cox is said to have served it. It is the benchmark by which bartenders judge balance.",abv:"~22%",difficulty:"Easy",flavor:["Sour","Refreshing","Citrus"],steps:["Add rum, lime juice and sugar syrup to a shaker with ice.","Shake hard until ice-cold.","Double strain into a chilled coupe.","Garnish with a lime wheel."]},
+  "dark-stormy":{origin:{year:"c.1900s / 1991 (trademark)",place:"Bermuda",creator:"Gosling's"},history:"Bermuda's national drink, tied to the British Royal Navy presence on the island. Gosling's trademarked the name, which technically requires Gosling's Black Seal rum.",abv:"~13%",difficulty:"Easy",flavor:["Spicy","Refreshing","Sweet"],steps:["Fill a highball with ice and add the dark rum.","Top with ginger beer (not ale, traditionally).","Garnish with a lime wedge — and leave the 'storm cloud' of rum floating on top."]},
+  "espresso-martini":{origin:{year:"1983",place:"London, UK",creator:"Dick Bradsell"},history:"Created by legendary bartender Dick Bradsell at Fred's Club / the Soho Brasserie, reputedly for a model who asked for something to 'wake me up and then mess me up'. Originally called the Vodka Espresso.",abv:"~20%",difficulty:"Intermediate",flavor:["Coffee","Sweet","Boozy"],steps:["Pull a fresh shot of espresso and let it cool slightly.","Add vodka, coffee liqueur, syrup and espresso to a shaker with ice.","Shake hard to build a thick crema.","Double strain into a coupe; float three coffee beans."]},
+  "french-75":{origin:{year:"1915 / 1927 (named)",place:"Paris, France",creator:"Harry MacElhone (attrib.)"},history:"Named after the French 75mm field gun for its powerful kick; the recipe first appeared in print in the 1927 Here's How and the 1930 Savoy Cocktail Book.",abv:"~16%",difficulty:"Intermediate",flavor:["Sour","Sparkling","Citrus"],steps:["Shake gin, lemon and syrup with ice.","Strain into a chilled flute.","Top with champagne.","Garnish with a lemon twist."]},
+  "french-martini":{origin:{year:"1980s–90s",place:"New York, USA",creator:"Keith McNally (attrib.)"},history:"A product of the 'martini' boom, attributed to restaurateur Keith McNally's New York venues. The Chambord and pineapple give it its signature frothy crown — and it isn't French.",abv:"~18%",difficulty:"Easy",flavor:["Fruity","Sweet","Silky"],steps:["Add vodka, Chambord and pineapple juice to a shaker with ice.","Shake hard to foam the pineapple juice.","Double strain into a chilled coupe.","Garnish with a lemon twist or raspberries."]},
+  "gimlet":{origin:{year:"c.1860s–1920s",place:"British Royal Navy",creator:"Disputed"},history:"Two origin theories compete: the drilling tool (for its sharp, piercing bite) and Royal Navy surgeon Rear-Admiral Sir Thomas Gimlette, said to have mixed gin with lime to make anti-scurvy rations palatable. Traditionally made with Rose's Lime Cordial.",abv:"~28%",difficulty:"Easy",flavor:["Sour","Citrus","Boozy"],steps:["Add gin, lime juice and sugar syrup to a shaker with ice.","Shake until cold.","Double strain into a chilled coupe.","Garnish with a lime wheel."],funFact:"Its name has two rival origins: the small drilling tool, or Royal Navy surgeon Sir Thomas Gimlette, who reputedly mixed gin with lime to help sailors take their anti-scurvy ration."},
+  "gin-basil-smash":{origin:{year:"2008",place:"Hamburg, Germany",creator:"Jörg Meyer"},history:"A genuinely modern classic, created by Jörg Meyer at Le Lion bar in Hamburg. It spread worldwide within a couple of years thanks to early cocktail blogs.",abv:"~22%",difficulty:"Intermediate",flavor:["Herbal","Sour","Refreshing"],steps:["Muddle basil leaves with sugar syrup in a shaker.","Add gin, lemon juice and ice.","Shake hard.","Double strain over fresh ice into a rocks glass; garnish with a basil sprig."]},
+  "godfather":{origin:{year:"1970s",place:"USA / Italy",creator:"Unknown"},history:"A simple two-part duo named after the 1972 film. Swap Scotch for vodka and you get a Godmother.",abv:"~32%",difficulty:"Easy",flavor:["Boozy","Nutty","Sweet"],steps:["Fill a rocks glass with ice.","Add bourbon (or Scotch) and amaretto.","Stir to combine; garnish with an orange twist."]},
+  "irish-coffee":{origin:{year:"1943",place:"Foynes, Ireland",creator:"Joe Sheridan"},history:"Created by chef Joe Sheridan at Foynes flying-boat terminal (now Shannon Airport) to warm cold transatlantic passengers. Brought to the US by the Buena Vista Café in San Francisco in 1952.",abv:"~10%",difficulty:"Intermediate",flavor:["Coffee","Creamy","Sweet"],steps:["Warm a stemmed glass and add sugar and hot coffee.","Add Irish whiskey and stir to dissolve.","Lightly whip the cream until just pourable.","Float the cream over the back of a spoon so it sits on top."]},
+  "manhattan":{origin:{year:"c.1860s–1880s",place:"New York, USA",creator:"Disputed"},history:"Named for New York's Manhattan Club (or its borough), with the popular 'Lady Randolph Churchill' banquet story now debunked — she was in England, pregnant with Winston, at the time. Cocktail historians lean toward a bartender named Black in 1860s Manhattan.",abv:"~30%",difficulty:"Easy",flavor:["Boozy","Aromatic","Sweet"],steps:["Add whiskey, sweet vermouth and a dash of bitters to a mixing glass with ice.","Stir for 20–30 seconds until cold.","Strain into a chilled coupe or martini glass.","Garnish with a cherry."],funFact:"The romantic tale that it was invented for Lady Randolph Churchill's banquet is a myth — she was in England awaiting Winston's birth. It's named for the Manhattan Club or the borough itself."},
+  "margarita":{origin:{year:"c.1930s–1940s",place:"Mexico / US border",creator:"Disputed"},history:"A tequila member of the older 'Daisy' family (margarita means 'daisy' in Spanish), with at least half a dozen claimed inventors across Mexico and the southern US. The IBA spec is 50:20:15 tequila:triple sec:lime.",abv:"~24%",difficulty:"Easy",flavor:["Sour","Citrus","Refreshing"],steps:["Salt half the rim of a chilled coupe (optional).","Shake tequila, triple sec and lime with ice.","Double strain into the glass.","Garnish with a lime wheel."]},
+  "mimosa":{origin:{year:"1925",place:"Paris, France",creator:"Frank Meier (attrib.)"},history:"Attributed to bartender Frank Meier at the Hôtel Ritz Paris, named after the yellow mimosa flower. A near-twin of the older Buck's Fizz, which uses a 2:1 ratio.",abv:"~8%",difficulty:"Easy",flavor:["Fruity","Sparkling","Refreshing"],steps:["Chill a flute.","Add the orange juice.","Top gently with prosecco or champagne.","Serve immediately, no garnish."]},
+  "mojito":{origin:{year:"c.1900s (from 1500s El Draque)",place:"Havana, Cuba",creator:"Unknown"},history:"Its ancestor 'El Draque' — aguardiente, lime, sugarcane and mint — dates to the 1500s; the modern rum mojito emerged in Havana in the early 1900s, later a favourite at La Bodeguita del Medio. The 500-year claim refers to that distant ancestor, not the drink as served today.",abv:"~13%",difficulty:"Intermediate",flavor:["Refreshing","Sour","Herbal"],steps:["Gently muddle mint with lime and sugar syrup in a highball.","Add rum and half-fill with crushed ice.","Churn with a bar spoon, then top with more crushed ice.","Add a splash of soda; garnish with a mint sprig."],funFact:"Its 16th-century ancestor 'El Draque' used aguardiente, mint, lime and sugarcane; the rum mojito as we know it is an early-1900s Havana creation."},
+  "moscow-mule":{origin:{year:"1941",place:"Los Angeles, USA",creator:"Morgan, Martin & Sobieski"},history:"Famously invented to shift slow-selling vodka and ginger beer, struck up between a vodka distributor, a ginger-beer maker and a bar owner at the Cock 'n' Bull in Hollywood. The copper mug became its signature marketing hook.",abv:"~12%",difficulty:"Easy",flavor:["Spicy","Citrus","Refreshing"],steps:["Fill a copper mug or highball with ice.","Add vodka and lime juice.","Top with ginger beer.","Stir and garnish with a lime wedge."]},
+  "negroni":{origin:{year:"1919",place:"Florence, Italy",creator:"Count Camillo Negroni"},history:"Count Camillo Negroni asked a Florentine bartender to stiffen his Americano by swapping soda for gin. Equal parts gin, Campari and sweet vermouth — one of the great equal-build cocktails.",abv:"~24%",difficulty:"Easy",flavor:["Bitter","Boozy","Aromatic"],steps:["Add gin, Campari and sweet vermouth to a rocks glass with ice.","Stir until well chilled.","Express an orange twist over the top and drop it in."]},
+  "new-york-sour":{origin:{year:"1880s",place:"Chicago / New York, USA",creator:"Unknown"},history:"A Whiskey Sour with a red-wine float, originally called the 'Continental Sour' or 'Southern Whiskey Sour' before settling on New York. The wine layer adds tannin and colour.",abv:"~20%",difficulty:"Intermediate",flavor:["Sour","Fruity","Boozy"],steps:["Dry shake whiskey, lemon, syrup and foamer.","Add ice and shake again.","Strain over fresh ice in a rocks glass.","Slowly float red wine over the back of a spoon."]},
+  "old-fashioned":{origin:{year:"1880s (term)",place:"USA",creator:"Unknown"},history:"When drinkers asked for a cocktail made the 'old-fashioned' way — spirit, sugar, water, bitters — the name stuck, codifying the original 1806 definition of the word 'cocktail'. The James E. Pepper / Pendennis Club bourbon story is the popular legend.",abv:"~32%",difficulty:"Intermediate",flavor:["Boozy","Aromatic","Sweet"],steps:["Add sugar and bitters to a rocks glass with a splash of water; muddle to dissolve.","Add a large ice cube and the whiskey.","Stir until chilled and diluted.","Express and drop in an orange twist."]},
+  "paloma":{origin:{year:"Mid-20th C.",place:"Mexico",creator:"Disputed (Don Javier Delgado Corona, attrib.)"},history:"Mexico's most popular tequila drink — far more so domestically than the margarita — often attributed to Don Javier Delgado Corona of La Capilla in Tequila. Traditionally built with grapefruit soda such as Squirt or Jarritos.",abv:"~12%",difficulty:"Easy",flavor:["Citrus","Refreshing","Sweet"],steps:["Salt the rim of a highball (optional) and fill with ice.","Add tequila, lime and a pinch of salt.","Top with grapefruit soda.","Stir gently; garnish with a grapefruit or lime wedge."]},
+  "pina-colada":{origin:{year:"1954",place:"San Juan, Puerto Rico",creator:"Ramón 'Monchito' Marrero"},history:"The official national drink of Puerto Rico, generally credited to Ramón Marrero at the Caribe Hilton in 1954. Coconut cream had only recently become commercially available, making it possible.",abv:"~13%",difficulty:"Easy",flavor:["Tropical","Creamy","Sweet"],steps:["Add rum, pineapple juice, coconut cream and lime to a blender (or shake hard) with ice.","Blend or shake until smooth.","Pour into a chilled highball or hurricane glass.","Garnish with pineapple and a cherry."]},
+  "sazerac":{origin:{year:"c.1850s–1900s",place:"New Orleans, USA",creator:"Antoine Amédée Peychaud (lineage)"},history:"Rooted in New Orleans apothecary Antoine Peychaud's bitters; originally made with Sazerac-brand cognac before phylloxera pushed it toward rye whiskey. The absinthe is used only to rinse the glass.",abv:"~30%",difficulty:"Advanced",flavor:["Boozy","Aromatic","Herbal"],steps:["Chill a rocks glass, then rinse it with absinthe and discard the excess.","Stir cognac (or rye), sugar and Peychaud's bitters with ice.","Strain into the absinthe-rinsed glass (no ice).","Express a lemon twist over the top."]},
+  "sex-on-the-beach":{origin:{year:"1987",place:"Florida, USA",creator:"Ted Pizio (attrib.)"},history:"A product of the fruity, spring-break 1980s, reputedly named by a Florida bartender during a peach-schnapps sales contest. Pure neon-era nostalgia.",abv:"~11%",difficulty:"Easy",flavor:["Fruity","Sweet","Refreshing"],steps:["Fill a highball with ice.","Add vodka, peach schnapps, orange and cranberry juice.","Churn or stir to combine.","Garnish with an orange slice."]},
+  "sidecar":{origin:{year:"c.1920s",place:"Paris / London",creator:"Disputed (Harry's Bar / Buck's Club)"},history:"An early sour of the brandy-Daisy lineage, claimed by both Harry's New York Bar in Paris and the Buck's Club in London around the end of WWI. Named for the motorcycle sidecar of a regular patron.",abv:"~26%",difficulty:"Intermediate",flavor:["Sour","Citrus","Boozy"],steps:["Sugar the rim of a coupe (optional).","Shake cognac, triple sec and lemon with ice.","Double strain into the glass.","Garnish with an orange twist."]},
+  "singapore-sling":{origin:{year:"c.1915",place:"Singapore",creator:"Ngiam Tong Boon"},history:"Created by bartender Ngiam Tong Boon at the Long Bar of the Raffles Hotel. The original recipe was lost; today's standard was reconstructed from memory and old notes decades later.",abv:"~16%",difficulty:"Advanced",flavor:["Fruity","Sour","Aromatic"],steps:["Shake all ingredients except the soda with ice.","Strain into an ice-filled highball.","Top with a splash of soda if desired.","Garnish with a cherry and a pineapple wedge."]},
+  "southside":{origin:{year:"1910s–1920s",place:"New York / Chicago",creator:"Disputed"},history:"A gin sour with mint, linked both to NYC's 21 Club and (by legend) Chicago's South Side during Prohibition. Essentially a Mojito's stirred, gin-based cousin.",abv:"~22%",difficulty:"Intermediate",flavor:["Herbal","Sour","Refreshing"],steps:["Add gin, lemon, syrup and mint to a shaker with ice.","Shake hard.","Double strain into a chilled coupe.","Garnish with a mint leaf."]},
+  "tequila-sunrise":{origin:{year:"1970s",place:"Sausalito, California",creator:"Bobby Lozoff & Billy Rice"},history:"The modern version was created at the Trident bar in Sausalito and adopted by the Rolling Stones on their 1972 tour. The grenadine sinks to create the 'sunrise' gradient.",abv:"~11%",difficulty:"Easy",flavor:["Fruity","Sweet","Refreshing"],steps:["Fill a highball with ice and add tequila.","Top with orange juice.","Slowly pour grenadine down the side so it sinks.","Garnish with an orange slice — do not stir."]},
+  "tom-collins":{origin:{year:"1876 (recipe) / 1874 (hoax)",place:"London / USA",creator:"Jerry Thomas (printed)"},history:"First printed by 'father of mixology' Jerry Thomas in 1876, its name is tied to the 1874 'Tom Collins' practical-joke craze. Originally made with sweet Old Tom gin.",abv:"~12%",difficulty:"Easy",flavor:["Citrus","Refreshing","Sparkling"],steps:["Build gin, lemon and syrup in an ice-filled highball.","Stir to combine.","Top with soda water.","Garnish with a lemon slice and a cherry."]},
+  "tommys-margarita":{origin:{year:"c.1990",place:"San Francisco, USA",creator:"Julio Bermejo"},history:"Created by Julio Bermejo at Tommy's Mexican Restaurant, replacing triple sec with agave syrup to spotlight 100% agave tequila. A modern classic that reshaped how bars think about the margarita.",abv:"~24%",difficulty:"Easy",flavor:["Sour","Citrus","Refreshing"],steps:["Shake tequila, lime and agave syrup with ice.","Strain over fresh ice into a rocks glass.","Salt rim and lime wedge optional."]},
+  "whiskey-sour":{origin:{year:"1862 (printed)",place:"USA",creator:"Jerry Thomas (printed)"},history:"One of the oldest documented sours, appearing in Jerry Thomas's 1862 Bartender's Guide. The egg-white 'Boston Sour' variation gives the silky foam.",abv:"~20%",difficulty:"Easy",flavor:["Sour","Boozy","Citrus"],steps:["Dry shake whiskey, lemon, syrup and foamer without ice.","Add ice and shake again.","Strain over fresh ice into a rocks glass.","Garnish with a lemon twist and a few drops of bitters."]},
+  "white-lady":{origin:{year:"1919 / 1929",place:"London / Paris",creator:"Harry MacElhone"},history:"Harry MacElhone first made a crème-de-menthe version in 1919, then reworked it with gin at Harry's New York Bar in Paris in 1929. Essentially a gin Sidecar.",abv:"~24%",difficulty:"Intermediate",flavor:["Sour","Citrus","Boozy"],steps:["Add gin, triple sec and lemon to a shaker with ice.","Shake hard (add a little egg white for a silkier texture).","Double strain into a chilled coupe.","Garnish with a lemon twist."]},
+  "white-russian":{origin:{year:"c.1960s",place:"USA",creator:"Unknown"},history:"A cream-topped descendant of the Black Russian, popularised culturally by 'The Dude' in the 1998 film The Big Lebowski. Neither version has anything to do with Russia beyond the vodka.",abv:"~22%",difficulty:"Easy",flavor:["Creamy","Sweet","Coffee"],steps:["Add vodka and coffee liqueur to an ice-filled rocks glass.","Stir to combine.","Float cream gently over the top.","Dust with chocolate powder if you like."]},
+  "zombie":{origin:{year:"1934",place:"Hollywood, USA",creator:"Donn Beach"},history:"Created by Donn Beach (Don the Beachcomber), the founding father of Tiki, reputedly to help a hungover customer through a business meeting. So potent that bars limited guests to two.",abv:"~28%",difficulty:"Advanced",flavor:["Tropical","Boozy","Fruity"],steps:["Add all ingredients to a shaker (or blend briefly) with crushed ice.","Shake and pour unstrained into a tall glass.","Top with more crushed ice.","Garnish extravagantly — mint, fruit, the works."]},
+  // HOUSE SPECIALS — bar-original twists on the classics
+  "baileys-espresso-martini":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A creamy house riff on Dick Bradsell's Espresso Martini, leaning on Baileys and chocolate for a dessert-like finish.",abv:"~16%",difficulty:"Intermediate",flavor:["Coffee","Creamy","Sweet"],steps:["Pull a fresh double espresso and let it cool slightly.","Add all ingredients to a shaker with ice.","Shake hard for a thick crema.","Double strain into a martini glass; float three coffee beans."]},
+  "raspberry-rose-mojito":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A floral, berry-forward take on the Havana mojito using a limited-edition raspberry & rose soda.",abv:"~12%",difficulty:"Intermediate",flavor:["Fruity","Refreshing","Floral"],steps:["Muddle mint with raspberry syrup and lime in a highball.","Add rum and crushed ice, then churn.","Top with the raspberry & rose soda.","Garnish with a mint sprig."]},
+  "blackberry-margarita":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A vivid purple member of the margarita family, layering blackberry liqueur and a touch of blue curaçao over blanco tequila.",abv:"~20%",difficulty:"Easy",flavor:["Fruity","Sour","Sweet"],steps:["Shake all ingredients with ice.","Double strain into a salt-rimmed coupe or martini glass.","Garnish with a blackberry."]},
+  "peach-please-martini":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A delicate gin martini built on Lillet Blanc and stone fruit, finished with a peach & jasmine soda.",abv:"~14%",difficulty:"Intermediate",flavor:["Fruity","Floral","Refreshing"],steps:["Shake gin, Lillet, peach purée and syrup with ice.","Double strain into a chilled coupe.","Top with the peach & jasmine soda.","Garnish with a lemon slice."]},
+  "tiki-mai-tai":{origin:{year:"1944 (classic) / House build",place:"Oakland, USA (origin)",creator:"Victor 'Trader Vic' Bergeron"},history:"The Mai Tai was created by Trader Vic in 1944; its name comes from the Tahitian 'maita'i roa ae' — 'out of this world'. This is the bar's house build of that Tiki landmark.",abv:"~22%",difficulty:"Intermediate",flavor:["Tropical","Sour","Nutty"],steps:["Shake rum, Cointreau, orgeat and lime with ice.","Strain over crushed ice into a rocks glass.","Float dark rum over the top.","Garnish with a lime wedge and mint."]},
+  "cherish-the-devil":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A cherry-forward tequila long drink, balancing Cherry Heering's richness against bitter tonic.",abv:"~14%",difficulty:"Easy",flavor:["Fruity","Bitter","Refreshing"],steps:["Build tequila, Cherry Heering and lime over ice in a highball.","Add a dash of tonic and stir.","Garnish with a lime wedge."]},
+  "raspberry-paloma":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A berry-laced twist on Mexico's favourite tequila drink, swapping in raspberry for extra fruit.",abv:"~14%",difficulty:"Easy",flavor:["Fruity","Citrus","Refreshing"],steps:["Build tequila, lime, raspberry and sugar syrup over ice.","Stir, then top with the raspberry & rose soda.","Salt rim optional; garnish with a lime wedge."]},
+  "winter-sling":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A festive, warming reinterpretation of the Singapore Sling with cherry and orange depth.",abv:"~16%",difficulty:"Advanced",flavor:["Fruity","Aromatic","Sour"],steps:["Shake all ingredients with ice.","Double strain into a chilled coupe.","Garnish with a lemon slice."]},
+  "bar-old-fashioned":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"The house Old Fashioned, built on smooth Jameson Irish whiskey instead of the usual bourbon or rye.",abv:"~30%",difficulty:"Intermediate",flavor:["Boozy","Aromatic","Sweet"],steps:["Add sugar syrup and both bitters to a rocks glass.","Add a large ice cube and the whiskey.","Stir until chilled and diluted.","Express and drop in an orange twist."]},
+  "classic-negroni":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"The house Negroni, built with Bombay Sapphire and Martini Rubino for a slightly softer, aromatic profile.",abv:"~24%",difficulty:"Easy",flavor:["Bitter","Boozy","Aromatic"],steps:["Build gin, Martini Rubino and Campari over ice in a rocks glass.","Stir until well chilled.","Garnish with an orange zest and slice."]},
+  "cherry-disaronno-sour":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A house sour pairing almond Disaronno with Cherry Heering over a tart cranberry backbone.",abv:"~16%",difficulty:"Easy",flavor:["Sour","Fruity","Nutty"],steps:["Shake all ingredients with ice.","Strain over fresh ice into a rocks glass.","Garnish with a lime wheel or cherry."]},
+  "long-manhattan":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A refreshing long-format spin on the Manhattan, lengthened with a limited-edition orange & fig soda.",abv:"~12%",difficulty:"Easy",flavor:["Aromatic","Fruity","Refreshing"],steps:["Build Chivas, Martini Rubino and grenadine over ice in a highball.","Add a dash of the orange & fig soda and stir.","Garnish with a lemon twist."]},
+  "pink-grapefruit-aperol-spritz":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A citrus-forward upgrade on the Aperol Spritz using a pink grapefruit soda.",abv:"~9%",difficulty:"Easy",flavor:["Bitter","Citrus","Sparkling"],steps:["Fill a wine glass with ice.","Add Aperol, then prosecco, then the grapefruit soda.","Stir gently; garnish with grapefruit zest or a wheel."]},
+  "hugo-spritz":{origin:{year:"2005",place:"South Tyrol, Italy",creator:"Roland Gruber"},history:"A genuinely modern spritz invented by bartender Roland Gruber in northern Italy, originally with lemon balm syrup before elderflower took over. Now rivals the Aperol Spritz across Europe.",abv:"~9%",difficulty:"Easy",flavor:["Floral","Refreshing","Sparkling"],steps:["Fill a wine glass with ice.","Add St-Germain (elderflower), then prosecco.","Add a splash of soda.","Garnish with lime slices and mint."]},
+  "bombay-presse-spritz":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A citrus-gin spritz built on Bombay's lemon-forward gin, like a sparkling gin lemonade.",abv:"~11%",difficulty:"Easy",flavor:["Citrus","Refreshing","Sparkling"],steps:["Fill a wine glass with ice.","Add the lemon gin and a dash of fresh lemon.","Top with prosecco and a splash of soda.","Garnish with lemon slices and mint."]},
+  // NO / LOW ALCOHOL
+  "floradora":{origin:{year:"1900s (classic)",place:"USA (origin)",creator:"Unknown"},history:"The original Floradora was a gin-and-raspberry highball named after a hit 1900 Broadway musical; this is the alcohol-free version using Everleaf botanical aperitif.",abv:"0% (alcohol-free)",difficulty:"Easy",flavor:["Fruity","Refreshing","Sour"],steps:["Build the aperitif, lime and raspberry syrup over ice in a highball.","Top with ginger beer.","Stir gently; garnish with a raspberry."]},
+  "peach-spritz":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A peachy, effervescent house spritz with a soft floral lift from white peach & jasmine soda.",abv:"~8%",difficulty:"Easy",flavor:["Fruity","Floral","Sparkling"],steps:["Build vodka, cane syrup and lemon over ice in a wine glass.","Top with the white peach & jasmine soda.","Stir gently."]},
+  "french-spritz":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A light, low-alcohol spritz built on Lillet and Martini Ambrato, softened with apple juice.",abv:"~7%",difficulty:"Easy",flavor:["Floral","Fruity","Sparkling"],steps:["Build Lillet, Martini Ambrato and apple juice over ice in a wine glass.","Top with prosecco.","Stir gently to combine."]},
+  "celtic-garden":{origin:{year:"House special",place:"House recipe",creator:"The bar"},history:"A complex, botanical alcohol-free cocktail with real citrus depth, built on Everleaf aperitif.",abv:"0% (alcohol-free)",difficulty:"Intermediate",flavor:["Bitter","Citrus","Refreshing"],steps:["Build the aperitif, lemon and blood orange syrup over ice in a balloon glass.","Top with blood orange & elderflower tonic.","Stir gently; garnish with a lemon slice."]},
+};
+
+// Merge lore into the cocktail records (non-destructive: existing
+// fields win unless the lore explicitly overrides, e.g. corrected funFacts).
+COCKTAILS.forEach(c=>{
+  const lore = COCKTAIL_LORE[c.id];
+  if(lore) Object.assign(c, lore);
+});
 
 // ============================================
 // FORMULAS
@@ -1399,13 +1726,20 @@ const FORMULAS = [
 // ============================================
 // GAME STATE
 // ============================================
-let state = JSON.parse(localStorage.getItem('barwizz-state')) || {
-  xp:0, level:1, streak:0, lastActive:null,
+const DEFAULT_STATE = {
+  xp:0, level:1, streak:0, longestStreak:0, lastActive:null,
   totalQuizzes:0, totalCorrect:0, totalAnswered:0,
   cocktailScores:{}, // id -> {seen, correct, wrong, lastSeen}
   achievements:[],
   quizHighScores:{},
+  srs:{},            // id -> {ease, interval, reps, due}  (SM-2 spaced repetition)
+  daily:{date:null, completed:false, score:0, streak:0, lastDone:null},
+  gamesPlayed:0, bestBuildStreak:0,
 };
+let state = Object.assign({}, DEFAULT_STATE, JSON.parse(localStorage.getItem('barwizz-state')) || {});
+// Migrate older saves: ensure nested objects exist
+['cocktailScores','quizHighScores','srs','daily'].forEach(k=>{ if(!state[k]) state[k]=DEFAULT_STATE[k] instanceof Object?JSON.parse(JSON.stringify(DEFAULT_STATE[k])):DEFAULT_STATE[k]; });
+if(!Array.isArray(state.achievements)) state.achievements=[];
 
 function saveState(){localStorage.setItem('barwizz-state',JSON.stringify(state))}
 
@@ -1433,13 +1767,25 @@ const ACHIEVEMENTS_DEF = [
   {id:"level-5",name:"Bartender Status",desc:"Reach Level 5",icon:"&#127870;",condition:s=>s.level>=5},
   {id:"hundred-answers",name:"Centurion",desc:"Answer 100 questions total",icon:"&#128170;",condition:s=>s.totalAnswered>=100},
   {id:"level-10",name:"Bar Wizard",desc:"Reach the maximum level",icon:"&#129497;",condition:s=>s.level>=10},
+  {id:"daily-first",name:"Daily Dose",desc:"Complete your first Daily Challenge",icon:"&#128197;",condition:s=>(s.daily&&s.daily.lastDone)},
+  {id:"daily-streak-3",name:"Regular",desc:"3-day Daily Challenge streak",icon:"&#128467;",condition:s=>s.daily&&s.daily.streak>=3},
+  {id:"builder",name:"Mise en Place",desc:"Build a cocktail correctly in the game",icon:"&#129385;",condition:s=>s.bestBuildStreak>=1},
+  {id:"build-streak-5",name:"In the Weeds",desc:"Hit a 5-build streak in Build the Cocktail",icon:"&#128293;",condition:s=>s.bestBuildStreak>=5},
+  {id:"streak-14",name:"Unstoppable",desc:"Maintain a 14-day login streak",icon:"&#9889;",condition:s=>s.longestStreak>=14},
+  {id:"two-hundred-correct",name:"Cocktail Savant",desc:"Get 200 answers correct",icon:"&#127863;",condition:s=>s.totalCorrect>=200},
+  {id:"sharp-shooter",name:"Sharpshooter",desc:"Reach 90% accuracy (50+ answers)",icon:"&#127919;",condition:s=>s.totalAnswered>=50 && (s.totalCorrect/s.totalAnswered)>=0.9},
 ];
 
 // ============================================
 // CORE FUNCTIONS
 // ============================================
-function addXP(amount){
-  state.xp += amount;
+function addXP(amount, applyStreak=true){
+  const mult = applyStreak ? streakMultiplier() : 1;
+  const gained = Math.round(amount * mult);
+  state.xp += gained;
+  if(applyStreak && mult > 1 && amount > 0){
+    showToast(`+${gained} XP (${mult.toFixed(1)}x streak bonus!)`,'xp');
+  }
   let currentLevel = LEVELS.filter(l=>state.xp >= l.xp).pop();
   if(currentLevel && currentLevel.level > state.level){
     state.level = currentLevel.level;
@@ -1448,6 +1794,7 @@ function addXP(amount){
   }
   saveState();
   updateUI();
+  return gained;
 }
 
 function updateUI(){
@@ -1487,7 +1834,37 @@ function checkStreak(){
     state.streak = 1;
   }
   state.lastActive = today;
+  state.longestStreak = Math.max(state.longestStreak||0, state.streak);
   saveState();
+}
+
+// Streak multiplier: +10% XP per streak day, capped at 2x (10-day streak).
+function streakMultiplier(){
+  return 1 + Math.min(state.streak||0, 10) * 0.1;
+}
+
+// ---- SM-2 spaced repetition for flashcards ----
+// quality: 0-5. We map flashcard ratings fail/ok/good -> 1/3/5.
+function srsReview(id, quality){
+  const s = state.srs[id] || {ease:2.5, interval:0, reps:0, due:0};
+  if(quality < 3){
+    s.reps = 0; s.interval = 1;
+  } else {
+    s.reps++;
+    if(s.reps === 1) s.interval = 1;
+    else if(s.reps === 2) s.interval = 3;
+    else s.interval = Math.round(s.interval * s.ease);
+    s.ease = Math.max(1.3, s.ease + (0.1 - (5-quality)*(0.08 + (5-quality)*0.02)));
+  }
+  s.due = Date.now() + s.interval * 86400000;
+  s.lastReviewed = Date.now();
+  state.srs[id] = s;
+  saveState();
+}
+function getDueCocktails(){
+  const now = Date.now();
+  const due = COCKTAILS.filter(c=>!state.srs[c.id] || (state.srs[c.id].due||0) <= now);
+  return due.length ? due : COCKTAILS.slice();
 }
 
 function trackCocktail(id, correct){
@@ -1516,11 +1893,13 @@ function navigateTo(page){
   document.getElementById('page-'+page).classList.add('active');
   document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
 
+  if(page === 'dashboard') renderDailyBanner();
   if(page === 'recipes') renderRecipes();
   if(page === 'flashcards') initFlashcards();
   if(page === 'formulas') renderFormulas();
   if(page === 'academy') setAcademyTab(document.querySelector('.academy-tab.active'),'methods');
   if(page === 'quiz') showQuizMenu();
+  if(page === 'games') showGamesMenu();
   if(page === 'achievements') renderAchievements();
 
   // Close mobile sidebar
@@ -1594,9 +1973,12 @@ function renderRecipes(){
     return `
       <div class="recipe-card" onclick="showRecipeDetail('${c.id}')">
         <div class="recipe-card-header">
-          <div>
-            <h3>${c.name}</h3>
-            <span class="recipe-glass">${c.glass}</span>
+          <div class="recipe-card-title">
+            <span class="recipe-card-glass">${glassIcon(c.glass)}</span>
+            <div>
+              <h3>${c.name}</h3>
+              <span class="recipe-glass">${c.glass}</span>
+            </div>
           </div>
           ${mastery > 0 ? `<span style="color:${mastery>=80?'var(--green)':mastery>=50?'var(--gold)':'var(--rose)'};font-size:0.75rem;font-weight:700">${mastery}%</span>` : ''}
         </div>
@@ -1629,28 +2011,50 @@ function showRecipeDetail(id){
   const modal = document.getElementById('recipeModal');
   const content = document.getElementById('recipeDetailContent');
 
-  const glassEmojis = {'Rocks':'&#129347;','Highball':'&#129380;','Coupe':'&#127864;','Martini':'&#127864;','Wine Glass':'&#127863;','Flute':'&#129379;','Shot':'&#129380;','Latte Glass':'&#9749;','Brandy':'&#127864;','Large Wine Glass':'&#127863;','Martini / Coupe':'&#127864;','Coupe or Martini':'&#127864;','Balloon Glass':'&#127864;'};
-  const glassEmoji = glassEmojis[c.glass] || '&#127864;';
+  const steps = (c.steps && c.steps.length) ? c.steps : [c.method];
+  const diffColor = {Easy:'var(--green)',Intermediate:'var(--gold)',Advanced:'var(--rose)'}[c.difficulty] || 'var(--text-dim)';
+  const origin = c.origin || {};
+  const originLine = [origin.year, origin.place].filter(Boolean).join(' • ');
 
   content.innerHTML = `
     <div class="recipe-detail-header">
-      <div class="recipe-detail-glass">${glassEmoji}</div>
+      <div class="recipe-detail-glass">${glassIcon(c.glass)}</div>
       <div>
         <h2>${c.name}</h2>
         <div class="recipe-meta">${c.glass} &bull; ${c.method} &bull; Garnish: ${c.garnish}</div>
       </div>
     </div>
+
+    <div class="recipe-stat-row">
+      ${c.abv?`<div class="recipe-stat"><span class="rstat-label">ABV</span><span class="rstat-val">${c.abv}</span></div>`:''}
+      ${c.difficulty?`<div class="recipe-stat"><span class="rstat-label">Difficulty</span><span class="rstat-val" style="color:${diffColor}">${c.difficulty}</span></div>`:''}
+      <div class="recipe-stat"><span class="rstat-label">Method</span><span class="rstat-val">${c.tags.map(t=>t[0].toUpperCase()+t.slice(1)).join(' / ')}</span></div>
+    </div>
+
+    ${c.flavor&&c.flavor.length?`<div class="flavor-tags">${c.flavor.map(f=>`<span class="flavor-tag">${f}</span>`).join('')}</div>`:''}
+
     ${c.funFact ? `<div class="recipe-fun-fact">"${c.funFact}"</div>` : ''}
+
     <table class="ingredient-table">
       <thead><tr><th>QTY</th><th>INGREDIENT</th></tr></thead>
       <tbody>
         ${c.ingredients.map(i=>`<tr><td class="qty">${i.qty||'-'}</td><td>${i.item}</td></tr>`).join('')}
       </tbody>
     </table>
+
     <div class="method-steps">
-      <h4>Method: ${c.method}</h4>
+      <h4>Method &mdash; ${c.method}</h4>
+      <ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol>
     </div>
-    ${c.allergens&&c.allergens.length?`<p style="font-size:0.78rem;color:var(--rose)">Allergens: ${c.allergens.join(', ')}</p>`:''}
+
+    ${c.history?`
+      <div class="recipe-origin">
+        <h4>&#128220; Origins ${originLine?`<span class="origin-meta">${originLine}</span>`:''}</h4>
+        ${origin.creator&&origin.creator!=='Unknown'&&origin.creator!=='Disputed'?`<div class="origin-creator">Creator: ${origin.creator}</div>`:''}
+        <p>${c.history}</p>
+      </div>`:''}
+
+    ${c.allergens&&c.allergens.length?`<p style="font-size:0.78rem;color:var(--rose);margin-top:14px">&#9888; Allergens: ${c.allergens.join(', ')}</p>`:''}
     <div style="margin-top:20px;display:flex;gap:8px">
       <button class="btn btn-primary" onclick="document.getElementById('recipeModal').classList.remove('active')">Close</button>
       <button class="btn btn-secondary" onclick="startFlashcardFor('${c.id}')">Practice Flashcard</button>
@@ -1680,6 +2084,7 @@ function initFlashcards(filter='all'){
 }
 
 function getFilteredDeck(filter){
+  if(filter === 'due') return getDueCocktails();
   if(filter === 'weak') return getWeakCocktails();
   if(filter === 'classics') return COCKTAILS.filter(c=>c.category==='classic');
   if(filter === 'specials') return COCKTAILS.filter(c=>c.category==='special' || c.category==='noalc' || c.category==='lowalc');
@@ -1726,6 +2131,7 @@ function rateFlashcard(rating){
     const c = fcDeck[fcIndex];
     const correct = rating >= 2;
     trackCocktail(c.id, correct);
+    srsReview(c.id, [0,1,3,5][rating] ?? 3); // fail/ok/good -> SM-2 quality
     state.totalAnswered++;
     if(correct) { state.totalCorrect++; fcScore++; }
     saveState();
@@ -1756,8 +2162,11 @@ function startFlashcardFor(id){
 // ============================================
 // FORMULA LAB
 // ============================================
+function roundMeasure(x){return Math.round(x/2.5)*2.5;}
+
 function renderFormulas(){
-  document.getElementById('formulaGrid').innerHTML = FORMULAS.map(f => `
+  const DEFAULT_VOL = 120;
+  document.getElementById('formulaGrid').innerHTML = FORMULAS.map((f,i) => `
     <div class="formula-card">
       <div class="formula-header">
         <div class="formula-icon" style="background:${f.iconBg}">${f.icon}</div>
@@ -1772,6 +2181,16 @@ function renderFormulas(){
       <div class="ratio-bar">
         ${f.ratio.map(r=>`<div class="ratio-segment" style="width:${r.pct}%;background:${r.color}" title="${r.label}: ${r.pct}%">${r.pct}%</div>`).join('')}
       </div>
+
+      <div class="formula-scaler">
+        <div class="scaler-head">
+          <span>&#129516; Scale recipe</span>
+          <span class="scaler-vol"><b id="fvol-${i}">${DEFAULT_VOL}</b> ml total</span>
+        </div>
+        <input type="range" class="scaler-range" min="50" max="300" step="10" value="${DEFAULT_VOL}" oninput="scaleFormula(${i}, this.value)">
+        <div class="scaler-breakdown" id="fbreak-${i}">${formulaBreakdown(f, DEFAULT_VOL)}</div>
+      </div>
+
       <div class="formula-cocktails">
         ${f.cocktails.map(c=>{
           const cocktail = COCKTAILS.find(x=>x.name===c||x.name.startsWith(c));
@@ -1780,6 +2199,21 @@ function renderFormulas(){
       </div>
     </div>
   `).join('');
+}
+
+function formulaBreakdown(f, vol){
+  return f.ratio.map(r=>`
+    <div class="sb-item">
+      <span class="sb-dot" style="background:${r.color}"></span>
+      <span class="sb-label">${r.label}</span>
+      <span class="sb-ml">${roundMeasure(r.pct/100*vol)} ml</span>
+    </div>`).join('');
+}
+
+function scaleFormula(i, vol){
+  vol = +vol;
+  document.getElementById('fvol-'+i).textContent = vol;
+  document.getElementById('fbreak-'+i).innerHTML = formulaBreakdown(FORMULAS[i], vol);
 }
 
 // ============================================
@@ -1844,14 +2278,14 @@ function renderAcademyContent(tab){
   } else if(tab === 'glassware'){
     content.innerHTML = `
       <div class="glass-grid">
-        <div class="glass-card"><div class="glass-visual">&#129347;</div><h4>Rocks / Old Fashioned</h4><p>Short, wide, sturdy. For spirit-forward drinks served over ice. Holds 200-300ml.</p></div>
-        <div class="glass-card"><div class="glass-visual">&#129380;</div><h4>Highball</h4><p>Tall, straight-sided. For long drinks with mixers. Holds 300-350ml.</p></div>
-        <div class="glass-card"><div class="glass-visual">&#127864;</div><h4>Coupe</h4><p>Shallow, broad bowl. Elegant choice for shaken cocktails served up (no ice). Holds 150-200ml.</p></div>
-        <div class="glass-card"><div class="glass-visual">&#127864;</div><h4>Martini</h4><p>Iconic V-shape. For stirred or shaken cocktails served up. Holds 150-200ml. Prone to spilling!</p></div>
-        <div class="glass-card"><div class="glass-visual">&#127863;</div><h4>Wine Glass</h4><p>Large bowl shape. Used for spritzes and wine-based cocktails. Holds 350-500ml.</p></div>
-        <div class="glass-card"><div class="glass-visual">&#129379;</div><h4>Flute</h4><p>Tall, narrow. Preserves bubbles for champagne cocktails. Holds 150-200ml.</p></div>
-        <div class="glass-card"><div class="glass-visual">&#129380;</div><h4>Shot Glass</h4><p>Small, straight. For shooters and layered shots. Holds 25-50ml.</p></div>
-        <div class="glass-card"><div class="glass-visual">&#9749;</div><h4>Latte / Irish Coffee</h4><p>Heatproof glass with handle. For hot cocktails. Holds 200-250ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">${glassIcon('Rocks','glass-svg-lg')}</div><h4>Rocks / Old Fashioned</h4><p>Short, wide, sturdy. For spirit-forward drinks served over ice. Holds 200-300ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">${glassIcon('Highball','glass-svg-lg')}</div><h4>Highball</h4><p>Tall, straight-sided. For long drinks with mixers. Holds 300-350ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">${glassIcon('Coupe','glass-svg-lg')}</div><h4>Coupe</h4><p>Shallow, broad bowl. Elegant choice for shaken cocktails served up (no ice). Holds 150-200ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">${glassIcon('Martini','glass-svg-lg')}</div><h4>Martini</h4><p>Iconic V-shape. For stirred or shaken cocktails served up. Holds 150-200ml. Prone to spilling!</p></div>
+        <div class="glass-card"><div class="glass-visual">${glassIcon('Wine Glass','glass-svg-lg')}</div><h4>Wine Glass</h4><p>Large bowl shape. Used for spritzes and wine-based cocktails. Holds 350-500ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">${glassIcon('Flute','glass-svg-lg')}</div><h4>Flute</h4><p>Tall, narrow. Preserves bubbles for champagne cocktails. Holds 150-200ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">${glassIcon('Shot','glass-svg-lg')}</div><h4>Shot Glass</h4><p>Small, straight. For shooters and layered shots. Holds 25-50ml.</p></div>
+        <div class="glass-card"><div class="glass-visual">${glassIcon('Latte Glass','glass-svg-lg')}</div><h4>Latte / Irish Coffee</h4><p>Heatproof glass with handle. For hot cocktails. Holds 200-250ml.</p></div>
       </div>
     `;
   } else if(tab === 'spirits'){
@@ -1978,6 +2412,38 @@ function renderAcademyContent(tab){
         </div>
       </div>
     `;
+  } else if(tab === 'history'){
+    const dated = COCKTAILS
+      .map(c=>{ const m=(c.origin&&c.origin.year||'').match(/(\d{4})/); return m?{c, year:+m[1]}:null; })
+      .filter(Boolean)
+      .sort((a,b)=>a.year-b.year);
+    const eraOf = y => y<1900?'Pre-1900 — The Golden Age begins'
+      : y<1920?'1900–1919 — Pre-Prohibition'
+      : y<1934?'1920–1933 — Prohibition era'
+      : y<1960?'1934–1959 — Tiki & post-war'
+      : y<1990?'1960–1989 — The dark ages & disco'
+      : '1990–today — The craft revival';
+    let lastEra=null;
+    content.innerHTML = `
+      <p class="section-subtitle" style="margin-bottom:20px">A walk through cocktail history — ${dated.length} drinks on the menu with a datable origin. Tap any to read its full story.</p>
+      <div class="timeline">
+        ${dated.map(({c,year})=>{
+          const era=eraOf(year);
+          const header = era!==lastEra ? `<div class="timeline-era">${era}</div>` : '';
+          lastEra=era;
+          const place=(c.origin&&c.origin.place)||'';
+          return `${header}
+            <div class="timeline-item" onclick="showRecipeDetail('${c.id}')">
+              <div class="tl-year">${(c.origin.year||'').replace(/\s*\(.*\)/,'')}</div>
+              <div class="tl-dot"></div>
+              <div class="tl-body">
+                <div class="tl-name">${c.name}</div>
+                <div class="tl-meta">${place}${c.origin.creator&&c.origin.creator!=='Unknown'&&c.origin.creator!=='Disputed'?' &bull; '+c.origin.creator:''}</div>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    `;
   }
 }
 
@@ -2015,11 +2481,14 @@ function showQuizMenu(){
 }
 
 function startQuiz(modeId){
-  const mode = QUIZ_MODES.find(m=>m.id===modeId);
-  const questions = generateQuestions(modeId, mode.questionCount);
+  const isDaily = modeId === 'daily';
+  const mode = isDaily ? {id:'daily', questionCount:5} : QUIZ_MODES.find(m=>m.id===modeId);
+  const genMode = isDaily ? 'mixed' : modeId;
+  const questions = generateQuestions(genMode, mode.questionCount);
 
   quizState = {
     mode: modeId,
+    isDaily,
     questions,
     current: 0,
     correct: 0,
@@ -2030,6 +2499,7 @@ function startQuiz(modeId){
     timeLeft: modeId === 'speed' ? 30 : 0,
   };
 
+  navigateTo('quiz');
   document.getElementById('quizMenu').style.display = 'none';
   document.getElementById('quizActive').style.display = 'block';
   document.getElementById('quizResults').style.display = 'none';
@@ -2042,75 +2512,127 @@ function startRandomQuiz(){
   setTimeout(()=>startQuiz('mixed'),100);
 }
 
-function generateQuestions(mode, count){
-  let questions = [];
-  const pool = shuffleArray([...COCKTAILS]);
+// ---- Distractor helpers: normalise so wrong options can never be
+// secretly correct (e.g. "Coupe" vs "Coupe or Martini", or a wrong
+// ingredient that the drink actually contains). ----
+function normKey(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g,'');}
+function normGlass(g){
+  return String(g).toLowerCase()
+    .replace(/large |chilled |old fashioned/g,'')
+    .replace(/\s*\/\s*| or /g,' ')
+    .replace(/\s+/g,' ').trim()
+    .split(' ').sort().join(' '); // "martini coupe" === "coupe martini"
+}
+function normIngredient(s){
+  return String(s).toLowerCase()
+    .replace(/\(.*?\)/g,'')        // drop "(fresh)", "(Citrus)" etc.
+    .replace(/\bjuice\b|\bfresh\b|\bsyrup\b/g,'')
+    .replace(/[^a-z]/g,'').trim();
+}
+function uniqueBy(arr, keyFn){
+  const seen=new Set(); const out=[];
+  for(const x of arr){const k=keyFn(x); if(k && !seen.has(k)){seen.add(k);out.push(x);}}
+  return out;
+}
+function pickDistractors(pool, correct, keyFn, n=3){
+  const ck = keyFn(correct);
+  const cleaned = uniqueBy(pool, keyFn).filter(x=>keyFn(x)!==ck);
+  return shuffleArray(cleaned).slice(0,n);
+}
 
-  for(let i=0; i<Math.min(count, pool.length); i++){
-    const c = pool[i];
-    let q = null;
+// Plausible bar measures — mixing decimals and integers so a decimal
+// correct answer (e.g. 12.5 ml) is never the only odd one out.
+const MEASURE_LADDER = [2.5,5,7.5,10,12.5,15,20,22.5,25,30,35,40,45,50,60,75,90,100,120,150];
 
-    if(mode === 'ingredients' || (mode === 'mixed' && Math.random()<0.25)){
-      const correct = c.ingredients[0].item;
-      const wrongs = shuffleArray(COCKTAILS.filter(x=>x.id!==c.id).flatMap(x=>x.ingredients.map(i=>i.item)).filter(x=>x!==correct)).slice(0,3);
-      q = {type:'ingredients',question:`Which is an ingredient in a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
-    } else if(mode === 'measurements' || (mode === 'mixed' && Math.random()<0.5)){
-      const ing = c.ingredients.find(i=>i.qty && i.qty.includes('ml'));
-      if(ing){
-        const correct = ing.qty;
-        const num = parseInt(correct);
-        const wrongs = [...new Set([num-15,num-10,num+10,num+15,num+25].filter(n=>n>0&&n!==num))].slice(0,3).map(n=>n+' ml');
-        q = {type:'measurements',question:`How much ${ing.item} goes in a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
-      }
-    } else if(mode === 'method' || (mode === 'mixed' && Math.random()<0.65)){
-      const methods = [...new Set(COCKTAILS.map(c=>c.method))];
-      const correct = c.method;
-      const wrongs = shuffleArray(methods.filter(m=>m!==correct)).slice(0,3);
-      q = {type:'method',question:`What method is used for a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
-    } else if(mode === 'glassware' || (mode === 'mixed' && Math.random()<0.8)){
-      const glasses = [...new Set(COCKTAILS.map(c=>c.glass))];
-      const correct = c.glass;
-      const wrongs = shuffleArray(glasses.filter(g=>g!==correct)).slice(0,3);
-      q = {type:'glassware',question:`What glass is a ${c.name} served in?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
-    } else if(mode === 'garnish'){
-      const garnishes = [...new Set(COCKTAILS.map(c=>c.garnish))];
-      const correct = c.garnish;
-      const wrongs = shuffleArray(garnishes.filter(g=>g!==correct)).slice(0,3);
-      q = {type:'garnish',question:`What garnish goes on a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
-    } else if(mode === 'funfacts'){
-      if(c.funFact){
-        const others = shuffleArray(COCKTAILS.filter(x=>x.id!==c.id)).slice(0,3);
-        q = {type:'funfacts',question:`"${c.funFact}"`,context:'Which cocktail is this about?',options:shuffleArray([c.name,...others.map(o=>o.name)]),correct:c.name,cocktailId:c.id};
-      }
-    } else if(mode === 'speed'){
-      // Random type for speed
-      const types = ['ingredients','method','glassware','garnish'];
-      const t = types[Math.floor(Math.random()*types.length)];
-      return generateQuestions(t, 1);
-    }
-
-    if(!q){
-      // Fallback to method question
-      const methods = [...new Set(COCKTAILS.map(c=>c.method))];
-      const correct = c.method;
-      const wrongs = shuffleArray(methods.filter(m=>m!==correct)).slice(0,3);
-      q = {type:'method',question:`What method is used for a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
-    }
-
-    if(q.options.length < 4){
-      while(q.options.length < 4) q.options.push('-');
-    }
-    questions.push(q);
+function makeQuestion(type, c){
+  if(type === 'ingredients'){
+    const mine = c.ingredients.map(i=>i.item);
+    const mineKeys = new Set(mine.map(normIngredient));
+    const correct = mine[Math.floor(Math.random()*mine.length)];
+    const pool = COCKTAILS.filter(x=>x.id!==c.id)
+      .flatMap(x=>x.ingredients.map(i=>i.item))
+      .filter(item=>!mineKeys.has(normIngredient(item)));
+    const wrongs = pickDistractors(pool, correct, normIngredient);
+    if(wrongs.length < 3) return null;
+    return {type,question:`Which of these is an ingredient in a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
   }
-
-  if(mode === 'speed'){
-    questions = [];
-    const types = ['ingredients','method','glassware','garnish'];
-    for(let i=0;i<count;i++){
-      const t = types[i%types.length];
-      const qs = generateQuestions(t, 1);
-      if(qs.length) questions.push(qs[0]);
+  if(type === 'measurements'){
+    const ing = shuffleArray(c.ingredients.filter(i=>i.qty && i.qty.includes('ml') && /\d/.test(i.qty)))[0];
+    if(!ing) return null;
+    const correct = ing.qty;
+    const num = parseFloat(correct);
+    if(!isFinite(num)) return null;
+    const correctIsInt = Number.isInteger(num);
+    const all = MEASURE_LADDER.filter(n=>n!==num);
+    const byClose = arr => arr.slice().sort((a,b)=>Math.abs(a-num)-Math.abs(b-num));
+    const chosen=[];
+    // Straddle: pick a nearby value below and above so the correct
+    // answer is never simply the largest/smallest (e.g. 120 ml cola).
+    const below = byClose(all.filter(n=>n<num));
+    const above = byClose(all.filter(n=>n>num));
+    if(below.length) chosen.push(below[0]);
+    if(above.length) chosen.push(above[0]);
+    // Guarantee at least one distractor shares the correct answer's
+    // decimal/integer format, so e.g. 12.5 ml is never the lone decimal.
+    if(!chosen.some(n=>Number.isInteger(n)===correctIsInt)){
+      const sf = byClose(all.filter(n=>Number.isInteger(n)===correctIsInt))[0];
+      if(sf!=null) chosen.push(sf);
     }
+    // Fill any remaining slots with the next-closest values.
+    for(const n of byClose(all)){ if(chosen.length>=3) break; if(!chosen.includes(n)) chosen.push(n); }
+    const wrongs = chosen.slice(0,3).map(n=>n+' ml');
+    if(wrongs.length < 3) return null;
+    return {type,question:`How much ${ing.item} goes in a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+  }
+  if(type === 'method'){
+    const correct = c.method;
+    const wrongs = pickDistractors(COCKTAILS.map(x=>x.method), correct, normKey);
+    if(wrongs.length < 3) return null;
+    return {type,question:`What method is used to make a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+  }
+  if(type === 'glassware'){
+    const correct = c.glass;
+    const wrongs = pickDistractors(COCKTAILS.map(x=>x.glass), correct, normGlass);
+    if(wrongs.length < 3) return null;
+    return {type,question:`What glass is a ${c.name} served in?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+  }
+  if(type === 'garnish'){
+    const correct = c.garnish;
+    const wrongs = pickDistractors(COCKTAILS.map(x=>x.garnish), correct, normKey);
+    if(wrongs.length < 3) return null;
+    return {type,question:`What garnish completes a ${c.name}?`,options:shuffleArray([correct,...wrongs]),correct,cocktailId:c.id};
+  }
+  if(type === 'funfacts'){
+    if(!c.funFact) return null;
+    const others = shuffleArray(COCKTAILS.filter(x=>x.id!==c.id)).slice(0,3);
+    return {type,question:`"${c.funFact}"`,context:'Which cocktail is this about?',options:shuffleArray([c.name,...others.map(o=>o.name)]),correct:c.name,cocktailId:c.id};
+  }
+  return null;
+}
+
+function generateQuestions(mode, count){
+  const questions = [];
+  const pool = shuffleArray([...COCKTAILS]);
+  const mixedTypes = ['ingredients','measurements','method','glassware','garnish'];
+  const speedTypes = ['ingredients','method','glassware','garnish'];
+
+  let pi = 0;
+  let guard = 0;
+  while(questions.length < count && guard < pool.length * 4){
+    guard++;
+    const c = pool[pi % pool.length];
+    pi++;
+
+    let type = mode;
+    if(mode === 'mixed') type = mixedTypes[Math.floor(Math.random()*mixedTypes.length)];
+    else if(mode === 'speed') type = speedTypes[questions.length % speedTypes.length];
+
+    let q = makeQuestion(type, c);
+    // If this cocktail can't support that type, try a couple of fallbacks
+    if(!q){
+      for(const t of mixedTypes){ q = makeQuestion(t, c); if(q) break; }
+    }
+    if(q) questions.push(q);
   }
 
   return questions;
@@ -2205,27 +2727,45 @@ function finishQuiz(){
   const timeTaken = Math.round((Date.now() - quizState.startTime) / 1000);
 
   state.totalQuizzes++;
-  if(!state.quizHighScores[quizState.mode] || pct > state.quizHighScores[quizState.mode]){
+  if(!quizState.isDaily && (!state.quizHighScores[quizState.mode] || pct > state.quizHighScores[quizState.mode])){
     state.quizHighScores[quizState.mode] = pct;
   }
 
-  const xpEarned = quizState.correct * 10 + (pct === 100 ? 50 : 0);
-  addXP(xpEarned);
+  let xpEarned = quizState.correct * 10 + (pct === 100 ? 50 : 0);
+
+  // Daily Challenge: completion bonus + daily-specific streak
+  if(quizState.isDaily){
+    xpEarned += 50;
+    const today = new Date().toDateString();
+    const prev = state.daily.lastDone;
+    if(prev){
+      const diff = Math.floor((new Date(today) - new Date(prev)) / 86400000);
+      state.daily.streak = diff === 1 ? (state.daily.streak||0)+1 : (diff === 0 ? state.daily.streak : 1);
+    } else { state.daily.streak = 1; }
+    state.daily.lastDone = today;
+    state.daily.date = today;
+    state.daily.completed = true;
+    state.daily.score = pct;
+  }
+
+  const xpGained = addXP(xpEarned);
 
   if(pct >= 80) fireConfetti();
 
   document.getElementById('quizActive').style.display = 'none';
   document.getElementById('quizResults').style.display = 'block';
 
+  const daily = quizState.isDaily;
   document.getElementById('quizResults').innerHTML = `
     <div class="quiz-results">
+      ${daily?`<div class="results-daily-tag">&#128197; Daily Challenge${state.daily.streak>1?` &bull; ${state.daily.streak}-day streak &#128293;`:''}</div>`:''}
       <div class="results-score">${pct}%</div>
       <div class="results-label">${pct===100?'PERFECT!':pct>=80?'Excellent!':pct>=60?'Good work!':pct>=40?'Keep practicing!':'Study up!'}</div>
       <div class="results-stats">
         <div class="results-stat"><div class="rs-value" style="color:var(--green)">${quizState.correct}</div><div class="rs-label">Correct</div></div>
         <div class="results-stat"><div class="rs-value" style="color:var(--rose)">${quizState.questions.length - quizState.correct}</div><div class="rs-label">Wrong</div></div>
         <div class="results-stat"><div class="rs-value">${timeTaken}s</div><div class="rs-label">Time</div></div>
-        <div class="results-stat"><div class="rs-value" style="color:var(--gold)">+${xpEarned}</div><div class="rs-label">XP Earned</div></div>
+        <div class="results-stat"><div class="rs-value" style="color:var(--gold)">+${xpGained}</div><div class="rs-label">XP Earned</div></div>
       </div>
       <div class="results-breakdown">
         <h4>Question Breakdown</h4>
@@ -2238,12 +2778,193 @@ function finishQuiz(){
         `).join('')}
       </div>
       <div style="display:flex;gap:12px;justify-content:center">
-        <button class="btn btn-primary" onclick="startQuiz('${quizState.mode}')">Try Again</button>
-        <button class="btn btn-secondary" onclick="showQuizMenu()">Back to Menu</button>
+        ${daily
+          ? `<button class="btn btn-primary" onclick="navigateTo('dashboard')">Back to Dashboard</button>
+             <button class="btn btn-secondary" onclick="showQuizMenu()">Quiz Arena</button>`
+          : `<button class="btn btn-primary" onclick="startQuiz('${quizState.mode}')">Try Again</button>
+             <button class="btn btn-secondary" onclick="showQuizMenu()">Back to Menu</button>`}
       </div>
     </div>
   `;
   updateUI();
+}
+
+// ============================================
+// DAILY CHALLENGE
+// ============================================
+function isDailyDoneToday(){
+  return state.daily && state.daily.date === new Date().toDateString() && state.daily.completed;
+}
+function renderDailyBanner(){
+  const el = document.getElementById('dailyBanner');
+  if(!el) return;
+  const done = isDailyDoneToday();
+  el.classList.toggle('done', done);
+  el.innerHTML = done
+    ? `<div class="daily-left"><div class="daily-icon">&#9989;</div><div>
+         <div class="daily-title">Daily Challenge complete!</div>
+         <div class="daily-sub">Scored ${state.daily.score}% &bull; ${state.daily.streak||1}-day streak &#128293; &bull; back tomorrow</div>
+       </div></div>`
+    : `<div class="daily-left"><div class="daily-icon">&#128197;</div><div>
+         <div class="daily-title">Daily Challenge</div>
+         <div class="daily-sub">5 questions &bull; bonus XP &bull; ${state.daily.streak?`keep your ${state.daily.streak}-day streak alive!`:'start a streak today'}</div>
+       </div></div><div class="daily-cta">Play &#8594;</div>`;
+}
+function startDailyChallenge(){
+  if(isDailyDoneToday()){ showToast('Daily Challenge already done — see you tomorrow!','success'); return; }
+  startQuiz('daily');
+}
+
+// ============================================
+// GAMES — Build the Cocktail
+// ============================================
+function glassEmojiFor(glass){
+  const map={'Rocks':'&#129347;','Highball':'&#129380;','Coupe':'&#127864;','Martini':'&#127864;','Wine Glass':'&#127863;','Large Wine Glass':'&#127863;','Flute':'&#129379;','Shot':'&#129380;','Latte Glass':'&#9749;','Brandy':'&#127864;','Balloon Glass':'&#127864;','Martini / Coupe':'&#127864;','Coupe or Martini':'&#127864;'};
+  return map[glass] || '&#127864;';
+}
+
+// ---- Custom SVG glassware silhouettes (replaces colliding emoji) ----
+const GLASS_SHAPES = {
+  martini:'<path d="M5 7h22L16 21z"/><path d="M16 21v12"/><path d="M9 33h14"/>',
+  coupe:'<path d="M5 8h22"/><path d="M6 8a10 9 0 0 0 20 0"/><path d="M16 17v16"/><path d="M9 33h14"/>',
+  rocks:'<path d="M8 13h16l-1.5 21h-13z"/><path d="M11.5 22l4 4"/>',
+  highball:'<path d="M10 6h12l-1 30h-10z"/>',
+  wine:'<path d="M9 6h14"/><path d="M9 6c0 9 3 14 7 15 4-1 7-6 7-15"/><path d="M16 21v12"/><path d="M10 33h12"/>',
+  flute:'<path d="M13 6h6l-1 17h-4z"/><path d="M16 23v10"/><path d="M11 33h10"/>',
+  shot:'<path d="M10 18h12l-1.5 16h-9z"/>',
+  mug:'<path d="M9 8h11v28H9z"/><path d="M20 14c6 1 6 11 0 12"/>',
+  snifter:'<path d="M11 9h10"/><path d="M11 9c-3 8 1 14 5 15 4-1 8-7 5-15"/><path d="M16 24v8"/><path d="M11 32h10"/>',
+  balloon:'<path d="M9 8h14"/><path d="M8 9c-1 10 3 15 8 16 5-1 9-6 8-16"/><path d="M16 25v8"/><path d="M10 33h12"/>'
+};
+function glassType(glass){
+  const g=(glass||'').toLowerCase();
+  if(g.includes('rocks')||g.includes('old fashioned')) return 'rocks';
+  if(g.includes('highball')) return 'highball';
+  if(g.includes('balloon')) return 'balloon';
+  if(g.includes('brandy')||g.includes('snifter')) return 'snifter';
+  if(g.includes('flute')) return 'flute';
+  if(g.includes('shot')) return 'shot';
+  if(g.includes('latte')||g.includes('mug')||g.includes('coffee')) return 'mug';
+  if(g.includes('wine')) return 'wine';
+  if(g.includes('martini')&&!g.includes('coupe')) return 'martini';
+  if(g.includes('coupe')) return 'coupe';
+  return 'coupe';
+}
+function glassIcon(glass, cls='glass-svg'){
+  const shape=GLASS_SHAPES[glassType(glass)]||GLASS_SHAPES.coupe;
+  return `<svg class="${cls}" viewBox="0 0 32 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${shape}</svg>`;
+}
+
+const GAMES = [
+  {id:'build',name:'Build the Cocktail',desc:'Pick the correct ingredients off the shelf for each drink. Chain perfect builds for a bigger streak bonus.',icon:'&#129385;',difficulty:'Medium',color:'var(--teal)'},
+];
+
+function showGamesMenu(){
+  document.getElementById('gamesMenu').style.display='block';
+  document.getElementById('buildGame').style.display='none';
+  document.getElementById('gamesModes').innerHTML = GAMES.map(g=>`
+    <div class="quiz-mode-card" onclick="startBuildGame()">
+      <div class="mode-icon">${g.icon}</div>
+      <h3>${g.name}</h3>
+      <p>${g.desc}</p>
+      <span class="mode-difficulty" style="color:${g.color}">${g.difficulty}</span>
+      ${state.bestBuildStreak?`<p style="font-size:0.7rem;color:var(--gold);margin-top:8px">Best streak: ${state.bestBuildStreak}</p>`:''}
+    </div>`).join('');
+}
+
+let buildState=null;
+function startBuildGame(){
+  buildState={streak:0, target:null, selected:new Set(), checked:false, shelf:[], correctKeys:new Set()};
+  document.getElementById('gamesMenu').style.display='none';
+  document.getElementById('buildGame').style.display='block';
+  nextBuildRound();
+}
+function nextBuildRound(){
+  const c = shuffleArray(COCKTAILS.filter(x=>x.ingredients.length>=2 && x.ingredients.length<=6))[0];
+  const correctItems = c.ingredients.map(i=>i.item);
+  const correctKeys = new Set(correctItems.map(normIngredient));
+  const pool = uniqueBy(
+    COCKTAILS.filter(x=>x.id!==c.id).flatMap(x=>x.ingredients.map(i=>i.item)),
+    normIngredient
+  ).filter(it=>!correctKeys.has(normIngredient(it)));
+  const distractors = shuffleArray(pool).slice(0, Math.min(5, Math.max(3, 9-correctItems.length)));
+  buildState.target=c;
+  buildState.selected=new Set();
+  buildState.checked=false;
+  buildState.correctKeys=correctKeys;
+  buildState.shelf=shuffleArray([...correctItems, ...distractors]);
+  renderBuildRound();
+}
+function renderBuildRound(){
+  const c=buildState.target;
+  document.getElementById('buildGame').innerHTML = `
+    <div class="build-container">
+      <div class="build-header">
+        <button class="btn btn-ghost" onclick="showGamesMenu()">&#8592; Quit</button>
+        <div class="build-streak">&#128293; Streak: <b>${buildState.streak}</b></div>
+      </div>
+      <div class="build-prompt">
+        <div class="build-glass">${glassIcon(c.glass)}</div>
+        <div>
+          <div class="build-instruction">Build a</div>
+          <h2>${c.name}</h2>
+          <div class="build-hint">${c.ingredients.length} ingredients &bull; ${c.glass} &bull; tap everything that goes in</div>
+        </div>
+      </div>
+      <div class="build-shelf">
+        ${buildState.shelf.map((item,i)=>`<button class="shelf-item" id="shelf${i}" onclick="toggleBuildItem(${i})">${item}</button>`).join('')}
+      </div>
+      <div class="build-actions">
+        <button class="btn btn-primary btn-lg" id="buildCheckBtn" onclick="checkBuild()">Check Build</button>
+      </div>
+      <div id="buildResult"></div>
+    </div>`;
+}
+function toggleBuildItem(idx){
+  if(buildState.checked) return;
+  const el=document.getElementById('shelf'+idx);
+  if(buildState.selected.has(idx)){ buildState.selected.delete(idx); el.classList.remove('selected'); }
+  else { buildState.selected.add(idx); el.classList.add('selected'); }
+}
+function checkBuild(){
+  if(buildState.checked) return;
+  buildState.checked=true;
+  const c=buildState.target;
+  let correctPicked=0, wrongPicked=0;
+  buildState.shelf.forEach((item,i)=>{
+    const el=document.getElementById('shelf'+i);
+    const isCorrect=buildState.correctKeys.has(normIngredient(item));
+    const picked=buildState.selected.has(i);
+    el.classList.add('locked');
+    if(isCorrect && picked){ el.classList.add('right'); correctPicked++; }
+    else if(isCorrect && !picked){ el.classList.add('missed'); }
+    else if(!isCorrect && picked){ el.classList.add('wrong'); wrongPicked++; }
+  });
+  const total=buildState.correctKeys.size;
+  const perfect = correctPicked===total && wrongPicked===0;
+  state.gamesPlayed++;
+  let xpGained=0;
+  if(perfect){
+    buildState.streak++;
+    state.bestBuildStreak=Math.max(state.bestBuildStreak||0, buildState.streak);
+    trackCocktail(c.id,true);
+    xpGained=addXP(15 + buildState.streak*3);
+    if(buildState.streak>0 && buildState.streak%5===0) fireConfetti();
+  } else {
+    buildState.streak=0;
+    trackCocktail(c.id,false);
+  }
+  saveState(); updateUI();
+  const btn=document.getElementById('buildCheckBtn'); if(btn) btn.style.display='none';
+  document.getElementById('buildResult').innerHTML=`
+    <div class="build-feedback ${perfect?'good':'bad'}">
+      <div class="bf-title">${perfect?'&#127881; Perfect build!':'Not quite right'}</div>
+      <div class="bf-sub">${perfect
+        ? `+${xpGained} XP &bull; streak now ${buildState.streak}`
+        : `You got ${correctPicked}/${total} correct${wrongPicked?`, plus ${wrongPicked} that don't belong`:''}. Streak reset.`}</div>
+      <div class="bf-recipe"><strong>Recipe:</strong> ${c.ingredients.map(i=>i.item).join(', ')}</div>
+      <button class="btn btn-primary" onclick="nextBuildRound()">Next Drink &#8594;</button>
+    </div>`;
 }
 
 // ============================================
@@ -2290,6 +3011,7 @@ function shuffleArray(arr){
 // ============================================
 checkStreak();
 updateUI();
+renderDailyBanner();
 renderRecipes();
 </script>
 
